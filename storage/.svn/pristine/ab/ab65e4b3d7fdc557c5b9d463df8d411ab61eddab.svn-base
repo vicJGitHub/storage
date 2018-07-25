@@ -1,0 +1,75 @@
+package com.hywa.bigdata.storage.entity.inheritEntity;
+
+import lombok.Data;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
+
+@Data
+public class InheritOrderdetail {
+
+    @NotNull(message = "订单id不能为空")
+    @Size(min=0,message ="订单id不能为空" )
+    private String id;
+
+    private String operator;
+
+    private String operatorPhone;
+
+    private String title;
+
+    private String code;
+
+    private String consignee;
+
+    private String consigneePhone;
+
+    private String client;
+
+    private String department;
+
+    private String trackingNumber;
+
+    private String deliveryTime;
+
+    private String driver;
+
+    private String driverPhone;
+
+    private String shippingAddress;
+
+    private String outputCode;
+
+    @NotNull(message = "流程id不能为空")
+    @Size(min = 0,message = "流程id不能为空")
+    private String processId;
+
+    private String currentStep;
+
+    @NotNull(message = "任务id不能为空")
+    @Size(min=0,message = "任务id不能为空")
+    private String taskId;
+
+    private Integer state;
+
+    private Date createTime;
+
+    private Date updateTime;
+
+    private String createUser;
+
+    private String updateUser;
+
+    @NotNull(message = "步骤类型不能为空")
+    @Size(min=0,message = "步骤类型不能为空")
+    private String submitType;
+
+    private String opinion;
+
+    private String description;
+
+    private String taskKey;
+    
+    private String clientName;
+
+}

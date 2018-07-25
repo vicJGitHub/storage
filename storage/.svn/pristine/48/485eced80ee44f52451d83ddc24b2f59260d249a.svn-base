@@ -1,0 +1,63 @@
+package com.hywa.bigdata.storage.service.impl;
+
+import com.hywa.bigdata.storage.entity.SysUser;
+import com.hywa.bigdata.storage.entity.SysUserExample;
+import com.hywa.bigdata.storage.mapper.SysUserMapper;
+import com.hywa.bigdata.storage.service.SysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * <p>
+ * 用户表 服务实现类
+ * </p>
+ *
+ * @author vic
+ * @since 2018-05-30
+ */
+@Service
+public class SysUserServiceImpl implements SysUserService {
+
+	@Autowired
+	SysUserMapper sysUserMapper;
+
+	@Override
+	public List<SysUser> findByDepartment(String refSysDepartment) {
+		SysUserExample sysUserExample = new SysUserExample();
+		SysUserExample.Criteria criteria = sysUserExample.createCriteria();
+		criteria.andREF_SYS_DEPARTMENTEqualTo(refSysDepartment);
+		return sysUserMapper.selectByExample(sysUserExample);
+
+	}
+
+	@Override
+	public String findInfoById(String id) {
+		List<String> strings = Arrays.asList(id.split(","));
+		List<String> deps = new ArrayList<>();
+		strings.forEach(s -> {
+			SysUser user = sysUserMapper.selectByPrimaryKey(s);
+			String dep = user.getGUID() + ":" + user.getREAL_NAME();
+			deps.add(dep);
+		});
+		String result = deps.get(0);
+		for (int i = 1; i < deps.size(); i++) {
+			result = result + "," + deps.get(i);
+		}
+		return result;
+	}
+
+	@Override
+	public String findRealNameById(String id) {
+		return sysUserMapper.selectByPrimaryKey(id).getREAL_NAME();
+	}
+	
+	@Override
+	public String findRefSysDepartmentById(String id) {
+		return sysUserMapper.selectByPrimaryKey(id).getREF_SYS_DEPARTMENT();
+	}
+
+}

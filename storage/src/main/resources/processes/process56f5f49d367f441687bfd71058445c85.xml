@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="process56f5f49d367f441687bfd71058445c85" isExecutable="true">
+    <startEvent id="start"></startEvent>
+    <userTask id="process56f5f49d367f441687bfd71058445c85153208502371918" name="财务审核" activiti:candidateGroups="0"></userTask>
+    <userTask id="process56f5f49d367f441687bfd71058445c85153208502371980" name="经理审核" activiti:candidateGroups="0"></userTask>
+    <userTask id="process56f5f49d367f441687bfd71058445c85153208502371985" name="销售出库" activiti:candidateGroups="0"></userTask>
+    <endEvent id="end"></endEvent>
+    <sequenceFlow sourceRef="start" targetRef="process56f5f49d367f441687bfd71058445c85153208502371918"></sequenceFlow>
+    <sequenceFlow sourceRef="process56f5f49d367f441687bfd71058445c85153208502371918" targetRef="process56f5f49d367f441687bfd71058445c85153208502371980"></sequenceFlow>
+    <sequenceFlow sourceRef="process56f5f49d367f441687bfd71058445c85153208502371980" targetRef="process56f5f49d367f441687bfd71058445c85153208502371985"></sequenceFlow>
+    <sequenceFlow sourceRef="process56f5f49d367f441687bfd71058445c85153208502371985" targetRef="end"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process56f5f49d367f441687bfd71058445c85">
+    <bpmndi:BPMNPlane bpmnElement="process56f5f49d367f441687bfd71058445c85" id="BPMNPlane_process56f5f49d367f441687bfd71058445c85"></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

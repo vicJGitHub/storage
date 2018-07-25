@@ -1,0 +1,14 @@
+business_url=http://192.168.1.176:2002/zhccFlow/next
+
+base_url=http://192.168.1.176:2002/purchase/outInStore
+
+PickingOutHouseId=6f5ec356dec140d1aa5d10558b7b106a
+ProductionInHouseId=04e03be92b154c19967a45d0d175d321
+PurchaseInHouseId=d7291435fed44a80b680484ac32693c3
+SalesReturnInHouseId=e6cdf66d6f0a4054bd548460204f0951
+SellOutHouseId=56f5f49d367f441687bfd71058445c85
+
+financePermission=87
+warehousePermission=10
+
+CheckPending=2

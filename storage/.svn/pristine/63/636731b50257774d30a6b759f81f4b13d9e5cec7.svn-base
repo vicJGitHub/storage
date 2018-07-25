@@ -1,0 +1,50 @@
+package com.hywa.bigdata.storage.mapper;
+
+import com.hywa.bigdata.storage.entity.Orderdetail;
+import com.hywa.bigdata.storage.entity.OrderdetailExample;
+import com.hywa.bigdata.storage.entity.SysUser;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+public interface OrderdetailMapper {
+    int countByExample(OrderdetailExample example);
+
+    int deleteByExample(OrderdetailExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(Orderdetail record);
+
+    int insertSelective(Orderdetail record);
+
+    List<Orderdetail> selectByExample(OrderdetailExample example);
+
+    Orderdetail selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") Orderdetail record, @Param("example") OrderdetailExample example);
+
+    int updateByExample(@Param("record") Orderdetail record, @Param("example") OrderdetailExample example);
+
+    int updateByPrimaryKeySelective(Orderdetail record);
+
+    int updateByPrimaryKey(Orderdetail record);
+
+    List<Map<String,Object>> findUnfinished(@Param("userId")String userId,@Param("department")String department);
+
+    int findToBeCompletedCount(List<String> menuPosition);
+
+    int findTodayCompletedCount(String menuPosition);
+
+    List<String> findByCurrentStep();
+
+    List<SysUser> findOperatorAll(String processId);
+    
+    String findMaxCode();
+    
+    int findRollBackOrderdetail(@Param("one")String one,@Param("two")String two);
+    
+    List<String> findCurrentStep(@Param("processId")String processId);
+}

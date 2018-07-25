@@ -1,0 +1,51 @@
+package com.hywa.bigdata.storage.service.impl;
+
+import com.hywa.bigdata.storage.entity.OrderHandleDesigning;
+import com.hywa.bigdata.storage.entity.OrderHandleDesigningExample;
+import com.hywa.bigdata.storage.entity.RuOrderHandleDesigning;
+import com.hywa.bigdata.storage.entity.RuOrderHandleDesigningExample;
+import com.hywa.bigdata.storage.mapper.OrderHandleDesigningMapper;
+import com.hywa.bigdata.storage.mapper.RuOrderHandleDesigningMapper;
+import com.hywa.bigdata.storage.service.RuOrderHandleDesigningService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class RuOrderHandleDesigningServiceImpl implements RuOrderHandleDesigningService {
+
+    @Autowired
+    OrderHandleDesigningMapper orderHandleDesigningMapper;
+
+    @Autowired
+    RuOrderHandleDesigningMapper ruOrderHandleDesigningMapper;
+
+    @Override
+    public List<RuOrderHandleDesigning> findOrderHandleDesigning(String taskId) {
+        RuOrderHandleDesigningExample ruOrderHandleDesigningExample = new RuOrderHandleDesigningExample();
+        RuOrderHandleDesigningExample.Criteria criteria = ruOrderHandleDesigningExample.createCriteria();
+        criteria.andTaskIdEqualTo(taskId);
+        criteria.andIsEnableEqualTo(1);
+        ruOrderHandleDesigningExample.setOrderByClause("sort");
+        return ruOrderHandleDesigningMapper.selectByExample(ruOrderHandleDesigningExample);
+    }
+
+    @Override
+    public Boolean updateRuOrderHandleDesigning(String taskId) {
+        OrderHandleDesigningExample orderHandleDesigningExample = new OrderHandleDesigningExample();
+        orderHandleDesigningExample.createCriteria().andTaskIdEqualTo(taskId);
+        List<OrderHandleDesigning> orderHandleDesignings = orderHandleDesigningMapper.selectByExample(orderHandleDesigningExample);
+        RuOrderHandleDesigning ruOrderHandleDesigning = new RuOrderHandleDesigning();
+        int count=0;
+        for (OrderHandleDesigning orderHandleDesigning : orderHandleDesignings) {
+            BeanUtils.copyProperties(orderHandleDesigning, ruOrderHandleDesigning);
+            if(1!=ruOrderHandleDesigningMapper.updateByPrimaryKey(ruOrderHandleDesigning)) {
+            	ruOrderHandleDesigningMapper.insert(ruOrderHandleDesigning);
+            };
+            count++;
+        }
+        return count==orderHandleDesignings.size();
+    }
+}

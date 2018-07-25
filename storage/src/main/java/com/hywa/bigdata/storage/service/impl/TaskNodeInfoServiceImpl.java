@@ -1,0 +1,176 @@
+package com.hywa.bigdata.storage.service.impl;
+
+
+import com.hywa.bigdata.storage.common.AjaxJson;
+import com.hywa.bigdata.storage.common.IDUtils;
+import com.hywa.bigdata.storage.common.ListKit;
+import com.hywa.bigdata.storage.entity.TaskNodeInfo;
+import com.hywa.bigdata.storage.entity.TaskNodeInfoExample;
+import com.hywa.bigdata.storage.entity.User;
+import com.hywa.bigdata.storage.mapper.TaskNodeInfoMapper;
+import com.hywa.bigdata.storage.service.SysUserService;
+import com.hywa.bigdata.storage.service.TaskNodeInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.*;
+
+import javax.transaction.Transactional;
+
+/**
+ * <p>
+ * 任务节点信息 服务实现类
+ * </p>
+ *
+ * @author vic
+ * @since 2018-05-30
+ */
+@Service
+public class TaskNodeInfoServiceImpl implements TaskNodeInfoService {
+
+    @Autowired
+    TaskNodeInfoMapper taskNodeInfoMapper;
+    
+    @Autowired
+    SysUserService SysUserService;
+
+    //保存任务节点
+    @Override
+    public AjaxJson saveTaskNodeInfo(TaskNodeInfo taskNodeInfo,User user) {
+        //id不能为数字,拼接步骤名加id
+        taskNodeInfo.setId(taskNodeInfo.getName()+":"+ IDUtils.genId());
+        taskNodeInfo.setCreateUser(user.getId());
+        taskNodeInfo.setCreateTime(new Date());
+        int result=taskNodeInfoMapper.insert(taskNodeInfo);
+        Map<String,String>map=new HashMap<>();
+        map.put("id",taskNodeInfo.getId());
+        return result>0?new AjaxJson(map):new AjaxJson(1,AjaxJson.MSGFAILURE);
+    }
+
+    //修改任务节点
+    @Override
+    public AjaxJson updateTaskNodeInfo(TaskNodeInfo taskNodeInfo,User user) {
+        taskNodeInfo.setUpdateUser(user.getId());
+        taskNodeInfo.setUpdateTime(new Date());
+        int result=taskNodeInfoMapper.updateByPrimaryKey(taskNodeInfo);
+        return result>0?new AjaxJson(0,AjaxJson.MSGSUCCESS):new AjaxJson(1,AjaxJson.MSGFAILURE);
+    }
+
+    //删除任务节点
+    @Override
+    public AjaxJson delTaskNodeInfo(String taskId) {
+        int result=taskNodeInfoMapper.deleteByPrimaryKey(taskId);
+        return result>0?new AjaxJson("删除成功"):new AjaxJson(1,AjaxJson.MSGFAILURE);
+    }
+
+    //查询任务节点
+    @Override
+    public List<TaskNodeInfo> findTaskNodeInfos(String processId) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        //查询作为审核的任务
+        criteria.andStepTypeIn(Arrays.asList(0,1));
+        criteria.andProcessIdEqualTo(processId);
+        criteria.andNameNotEqualTo("删除审核");
+        taskNodeInfoExample.setOrderByClause("sort");
+        List<TaskNodeInfo> taskNodeInfos = taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        return taskNodeInfos;
+    }
+
+    @Override
+    public List<TaskNodeInfo> findTaskNodeInfoAll(String processId) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        //查询作为审核的任务
+        //criteria.andStepTypeEqualTo(1);
+        criteria.andProcessIdEqualTo(processId);
+        taskNodeInfoExample.setOrderByClause("sort");
+        List<TaskNodeInfo> taskNodeInfos = taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        return taskNodeInfos;
+    }
+
+    @Override
+    public TaskNodeInfo findByMenuPosition(String menuPosition) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        taskNodeInfoExample.setOrderByClause("sort");
+        //查询作为审核的任务
+        criteria.andStepTypeEqualTo(0);
+        criteria.andMenuPositionEqualTo(menuPosition);
+        List<TaskNodeInfo> taskNodeInfos = taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        //简单的非空判断
+        return null!=taskNodeInfos&&taskNodeInfos.size()>0?taskNodeInfos.get(0):null;
+    }
+    
+    
+
+    @Override
+    @Transactional
+    public AjaxJson saveBatchTaskNodeInfo(List<TaskNodeInfo> taskNodeInfos,User user) { 
+    	TaskNodeInfoExample taskNodeInfoExample=new TaskNodeInfoExample();
+    	TaskNodeInfoExample.Criteria criteria=taskNodeInfoExample.createCriteria();
+    	criteria.andProcessIdEqualTo(taskNodeInfos.get(0).getProcessId());
+    	taskNodeInfoMapper.deleteByExample(taskNodeInfoExample); 
+    	taskNodeInfos.forEach(taskNodeInfo->{
+    		if(StringUtils.isEmpty(taskNodeInfo.getId()))taskNodeInfo.setId(IDUtils.getUUID());
+    		taskNodeInfo.setCreateUser(user.getId());
+    		taskNodeInfo.setCreateTime(new Date());
+    	});
+    	int i=taskNodeInfoMapper.insertBatch(taskNodeInfos);
+        return taskNodeInfos.size()==i?new AjaxJson(0,AjaxJson.MSGSUCCESS):new AjaxJson(1,AjaxJson.MSGFAILURE);
+    }
+
+    @Override
+    public TaskNodeInfo findById(String id) {
+        return taskNodeInfoMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<TaskNodeInfo> findAllByProcessId(String processId,String taskId) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        criteria.andProcessIdEqualTo(processId);
+        taskNodeInfoExample.setOrderByClause("sort");
+        if (!StringUtils.isEmpty(taskId))criteria.andIdEqualTo(taskId);
+        return taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+    }
+
+    @Override
+    public TaskNodeInfo findByNameAndProcessId(String name, String processId) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        criteria.andNameEqualTo(name);
+        criteria.andProcessIdEqualTo(processId);
+        List<TaskNodeInfo> taskNodeInfos = taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        return ListKit.isEmpty(taskNodeInfos)?null:taskNodeInfos.get(0);
+    }
+
+    @Override
+    public List<TaskNodeInfo> findByAssigne(String assignee) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        criteria.andAssigneeLike("%"+assignee+"%");
+        TaskNodeInfoExample.Criteria criteria1 = taskNodeInfoExample.createCriteria();
+        criteria1.andDepartmentLike("%"+SysUserService.findRefSysDepartmentById(assignee)+"%");
+        taskNodeInfoExample.or(criteria1);
+        return taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+    }
+
+	@Override
+	public List<TaskNodeInfo> findByMenuPositionAll(String menuPosition) {
+		 TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+	        TaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+	        criteria.andMenuPositionEqualTo(menuPosition);
+	        return taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+	}
+	
+	 public List<String> findMenuByAssigne(String assignee,String department) {
+	        return taskNodeInfoMapper.findMenuByAssigne(assignee,department);
+	    }
+
+	    public String findNameById(String id){
+        return taskNodeInfoMapper.selectByPrimaryKey(id).getName();
+        }
+
+}

@@ -1,0 +1,53 @@
+package com.hywa.bigdata.storage.service.impl;
+
+import com.hywa.bigdata.storage.entity.HomepageHandleDesigning;
+import com.hywa.bigdata.storage.entity.HomepageHandleDesigningExample;
+import com.hywa.bigdata.storage.entity.RuHomepageHandleDesigning;
+import com.hywa.bigdata.storage.entity.RuHomepageHandleDesigningExample;
+import com.hywa.bigdata.storage.mapper.HomepageHandleDesigningMapper;
+import com.hywa.bigdata.storage.mapper.RuHomepageHandleDesigningMapper;
+import com.hywa.bigdata.storage.service.RuHomepageHandleDesigningService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class RuHomepageHandleDesigningServiceImpl implements RuHomepageHandleDesigningService {
+
+    @Autowired
+    HomepageHandleDesigningMapper homepageHandleDesigningMapper;
+
+    @Autowired
+    RuHomepageHandleDesigningMapper ruHomepageHandleDesigningMapper;
+
+    @Override
+    public List<RuHomepageHandleDesigning> findByTaskIdAndIsEnalbe(String taskId){
+    RuHomepageHandleDesigningExample ruhomepageHandleDesigningExample = new RuHomepageHandleDesigningExample();
+        RuHomepageHandleDesigningExample.Criteria criteria = ruhomepageHandleDesigningExample.createCriteria();
+                    criteria.andTaskIdEqualTo(taskId);
+                    criteria.andIsEnableEqualTo(1);
+                    ruhomepageHandleDesigningExample.setOrderByClause("sort");
+    return ruHomepageHandleDesigningMapper.selectByExample(ruhomepageHandleDesigningExample);
+    }
+
+    @Override
+    public Boolean updateRuHomepageHandleDesigning(String taskId) {
+        HomepageHandleDesigningExample homepageHandleDesigningExample = new HomepageHandleDesigningExample();
+        homepageHandleDesigningExample.createCriteria().andTaskIdEqualTo(taskId);
+        List<HomepageHandleDesigning> homepageHandleDesignings = homepageHandleDesigningMapper.selectByExample(homepageHandleDesigningExample);
+        RuHomepageHandleDesigning ruHomepageHandleDesigning = new RuHomepageHandleDesigning();
+        int count=0;
+        for (HomepageHandleDesigning homepageHandleDesigning : homepageHandleDesignings) {
+            BeanUtils.copyProperties(homepageHandleDesigning, ruHomepageHandleDesigning);
+            if(1!=ruHomepageHandleDesigningMapper.updateByPrimaryKey(ruHomepageHandleDesigning)) {
+            	ruHomepageHandleDesigningMapper.insert(ruHomepageHandleDesigning);
+            };
+            count++;
+        }
+        return count==homepageHandleDesignings.size();
+    }
+
+
+}

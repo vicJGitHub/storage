@@ -1,0 +1,250 @@
+package com.hywa.bigdata.storage.controller;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.activiti.engine.TaskService;
+import org.activiti.engine.task.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.hywa.bigdata.storage.common.AjaxJson;
+import com.hywa.bigdata.storage.common.ListKit;
+import com.hywa.bigdata.storage.common.redis.RedisUser;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.AuditDeleteValidate;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.CheckOrderdetailValidate;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.DelOrderdetailValidate;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.FindNodeInfoByProcessIdValidate;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.OrderCompileWinValidate;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.OrderSaveValidate;
+import com.hywa.bigdata.storage.controller.validate.workFlowValidate.SaveOrderdetailValidate;
+import com.hywa.bigdata.storage.entity.HiOrderFieldDesigning;
+import com.hywa.bigdata.storage.entity.HiOrderHandleDesigning;
+import com.hywa.bigdata.storage.entity.OrderFieldDesigning;
+import com.hywa.bigdata.storage.entity.OrderHandleDesigning;
+import com.hywa.bigdata.storage.entity.Orderdetail;
+import com.hywa.bigdata.storage.entity.RuOrderFieldDesigning;
+import com.hywa.bigdata.storage.entity.RuOrderHandleDesigning;
+import com.hywa.bigdata.storage.entity.RuTaskNodeInfo;
+import com.hywa.bigdata.storage.entity.User;
+import com.hywa.bigdata.storage.entity.constant.ConstantMap;
+import com.hywa.bigdata.storage.service.ActivitiService;
+import com.hywa.bigdata.storage.service.HiOrderFieldDesigningService;
+import com.hywa.bigdata.storage.service.HiOrderHandleDesigningService;
+import com.hywa.bigdata.storage.service.HiTaskNodeInfoService;
+import com.hywa.bigdata.storage.service.OrderFieldDesigningService;
+import com.hywa.bigdata.storage.service.OrderHandleDesigningService;
+import com.hywa.bigdata.storage.service.OrderdetailService;
+import com.hywa.bigdata.storage.service.RuOrderFieldDesigningService;
+import com.hywa.bigdata.storage.service.RuOrderHandleDesigningService;
+import com.hywa.bigdata.storage.service.RuTaskNodeInfoService;
+import com.hywa.bigdata.storage.service.SysUserService;
+import com.hywa.bigdata.storage.service.WorkFlowService;
+import com.hywa.bigdata.storage.validate.JsonValidate;
+
+//整个流程的办理过程
+@RestController
+@RequestMapping("workFlow")
+public class WorkFlowController {
+
+	@Autowired
+	RedisUser redisUser;
+
+	@Autowired
+	RuTaskNodeInfoService ruTaskNodeInfoService;
+
+	@Autowired
+	RuOrderHandleDesigningService ruOrderHandleDesigningService;
+
+	@Autowired
+	RuOrderFieldDesigningService ruOrderFieldDesigningService;
+
+	@Autowired
+	OrderdetailService orderdetailService;
+
+	@Autowired
+	ActivitiService activitiService;
+
+	@Autowired
+	TaskService taskService;
+
+	@Autowired
+	WorkFlowService workFlowService;
+
+	@Autowired
+	SysUserService sysUserService;
+
+	@Autowired
+	HiOrderHandleDesigningService hiOrderHandleDesigningService;
+
+	@Autowired
+	HiOrderFieldDesigningService hiOrderFieldDesigningService;
+
+	@Autowired
+	HiTaskNodeInfoService hiTaskNodeInfoService;
+	
+	// 点击新增
+	@RequestMapping("orderSaveWin")
+	@JsonValidate(OrderSaveValidate.class)
+	public AjaxJson orderSaveWin(String menuPosition) {
+		RuTaskNodeInfo taskNodeInfo = ruTaskNodeInfoService.findByMenuPosition(menuPosition);
+		Map<String, Object> map = new HashMap<>();
+		findModule(map, taskNodeInfo.getId());
+		map.put("processId", taskNodeInfo.getProcessId());
+		return new AjaxJson(map);
+	}
+
+	// 点击办理(根据taskId查询对应的信息)
+	@SuppressWarnings("unchecked")
+	@RequestMapping("orderCompileWin")
+	@JsonValidate(OrderCompileWinValidate.class)
+	public AjaxJson orderCompileWin(String id) {
+		Orderdetail orderdetailInfo = orderdetailService.findById(id, new Orderdetail());
+		Map<String, Object> map = new HashMap<>();
+		List<HiOrderFieldDesigning> orderFieldDesigning = hiOrderFieldDesigningService
+				.findOrderFieldDesigning(orderdetailInfo.getTaskId());
+		List<HiOrderHandleDesigning> orderHandleDesigning = hiOrderHandleDesigningService
+				.findOrderHandleDesigning(orderdetailInfo.getTaskId());
+		map.put("orderFieldDesigning", orderFieldDesigning);
+		map.put("orderHandleDesigning", orderHandleDesigning);
+		if (ListKit.isEmpty((List<HiOrderFieldDesigning>) map.get("orderFieldDesigning"))) {
+			map = findModule(map, orderdetailInfo.getTaskId());
+		}
+		orderdetailInfo.setOperator(sysUserService.findRealNameById(orderdetailInfo.getOperator()));
+		map.put("orderdetailInfo", orderdetailInfo);
+		return new AjaxJson(map);
+	}
+
+	// 保存订单数据
+	@RequestMapping(value = "saveOrderdetail", method = RequestMethod.POST)
+	@JsonValidate(SaveOrderdetailValidate.class)
+	public AjaxJson saveOrderdetail(@Valid Orderdetail orderdetail, BindingResult bindingResult) throws ParseException {
+		User user = redisUser.getUser();
+		return workFlowService.saveOrderdetail(orderdetail, user);
+	}
+
+	// 审核订单数据
+	// 需要先修改在进行操作
+	@RequestMapping(value = "checkOrderdetail", method = RequestMethod.POST)
+	@JsonValidate(CheckOrderdetailValidate.class)
+	public AjaxJson checkOrderdetail(@RequestBody Orderdetail orderdetail) {
+		User user = redisUser.getUser();
+		return workFlowService.checkOrderdetail(orderdetail, user);
+	}
+
+	// 查询责任人当前任务(分页查询)--此处根据任务信息查询k-v
+	@RequestMapping("userTask")
+	public AjaxJson userTask(Orderdetail orderdetail, @RequestParam(defaultValue = "1") int page,
+			@RequestParam(name = "pageSize", defaultValue = "10") int rows, String menuPosition) {
+		User user = redisUser.getUser();
+		// 记录查出的总数量
+		AjaxJson ajaxJson = new AjaxJson();
+		// 第一个节点无法改变,可以用这个方法来作为当前步骤查询
+		if (null!=orderdetail&&!StringUtils.isEmpty(orderdetail.getCurrentStep()) && orderdetail.getCurrentStep().contains(":")) {
+			orderdetail.setCurrentStep(orderdetail.getCurrentStep().split(":")[0]);
+		}
+		List<Task> tasks = taskService.createTaskQuery().taskCandidateGroupIn(Arrays.asList(user.getId(),user.getRefSysDepartment())).list();
+		tasks = tasks.stream().distinct().collect(Collectors.toList());//去重
+		List<Map<String, Object>> list = workFlowService.userTask(page, rows, ajaxJson, orderdetail, tasks, user,
+				menuPosition);
+		List<Map<String, Object>> lists = ListKit.orderSort(page, rows, list);
+		ajaxJson.setData(lists);
+		return ajaxJson;
+	}
+
+	// 查询当前责任人的需处理任务数与今日完成的
+	@RequestMapping("countUserTask")
+	public AjaxJson countUserTask() {
+		// 通过accessToken获得用户信息
+		User user = redisUser.getUser();
+		Map<String, Object> admin = new HashMap<>();
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		admin = orderdetailService.adminUserTask();
+		Map<String, Object> product = new HashMap<String, Object>() {
+			{
+				put("PickingOutHouse", 0);
+				put("PurchaseInHouse", 0);
+				put("SellOutHouse", 0);
+				put("financePurchaseInHouse", 0);
+				put("financeSellOutHouse", 0);
+				put("financeSalesReturnInHouse", 0);
+			}
+		};
+		orderdetailService.findUnfinished(user).forEach(stringIntegerMap -> {
+			if (!StringUtils.isEmpty(ConstantMap.OUTANDINPARAMS.get(((String) stringIntegerMap.get("auditType"))))) {
+				product.put(ConstantMap.OUTANDINPARAMS.get((String) stringIntegerMap.get("auditType")),
+						Integer.valueOf(StringUtils.isEmpty(stringIntegerMap.get("num") + "") ? "0"
+								: stringIntegerMap.get("num") + ""));
+			}
+		});
+		orderdetailService.findUnfinishedByProcessId(product, user);
+		map.put("admin", admin);
+		map.put("user", orderdetailService.findAllCheckPendingOrder(product));
+		return new AjaxJson(map);
+	}
+
+	// 审核删除
+	@RequestMapping("auditDelete")
+	@JsonValidate(AuditDeleteValidate.class)
+	public AjaxJson auditDelete(Orderdetail orderdetail) {
+		User user = redisUser.getUser();
+		return workFlowService.auditDelete(orderdetail, user);
+	}
+
+	// 删除流程字段并且中断流程,还需判断当前状态0,1,3直接删 2审核再删
+	@RequestMapping("delOrderdetail")
+	@JsonValidate(DelOrderdetailValidate.class)
+	public AjaxJson delOrderdetail(String id) {
+		return workFlowService.delOrderdetail(id);
+	}
+
+	// 当前步骤
+	@RequestMapping("findNodeInfoByProcessId")
+	@JsonValidate(FindNodeInfoByProcessIdValidate.class)
+	public AjaxJson findNodeInfoByProcessId(String processId) {
+		List<String> taskNodeInfos = hiTaskNodeInfoService.findCurrentStep(processId);
+		List<Map<String, Object>> list = new ArrayList<>();
+		taskNodeInfos.forEach(a -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("currentStep", a);
+			list.add(map);
+		});
+		return new AjaxJson(list);
+	}
+
+	// 操作人员
+	@RequestMapping("findOperatorAll")
+	@JsonValidate(FindNodeInfoByProcessIdValidate.class)
+	public AjaxJson findOperatorAll(String processId) {
+		return new AjaxJson(orderdetailService.findOperatorAll(processId));
+	}
+
+	// 校验物流单号
+	@RequestMapping("checkTrackingNumber")
+	public AjaxJson checkTrackingNumber(String trackingNumber) {
+		return orderdetailService.checkTrackingNumber(trackingNumber) ? new AjaxJson(100, "物流单号已存在")
+				: new AjaxJson(0, "物流单号不存在");
+	}
+
+	// 查询所有组件信息
+	private Map<String, Object> findModule(Map<String, Object> map, String id) {
+		List<RuOrderFieldDesigning> orderFieldDesigning = ruOrderFieldDesigningService.findOrderFieldDesigning(id);
+		List<RuOrderHandleDesigning> orderHandleDesigning = ruOrderHandleDesigningService.findOrderHandleDesigning(id);
+		map.put("orderFieldDesigning", orderFieldDesigning);
+		map.put("orderHandleDesigning", orderHandleDesigning);
+		return map;
+	}
+}

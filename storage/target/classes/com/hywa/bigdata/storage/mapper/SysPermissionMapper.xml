@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hywa.bigdata.storage.mapper.SysPermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.hywa.bigdata.storage.entity.SysPermission" >
+    <id column="GUID" property="GUID" jdbcType="CHAR" />
+    <result column="CNAME" property="CNAME" jdbcType="VARCHAR" />
+    <result column="CCODE" property="CCODE" jdbcType="VARCHAR" />
+    <result column="CSTATUS" property="CSTATUS" jdbcType="CHAR" />
+    <result column="CREATEUSER" property="CREATEUSER" jdbcType="CHAR" />
+    <result column="CREATEDATE" property="CREATEDATE" jdbcType="TIMESTAMP" />
+    <result column="UPDATEUSER" property="UPDATEUSER" jdbcType="CHAR" />
+    <result column="UPDATEDATE" property="UPDATEDATE" jdbcType="TIMESTAMP" />
+    <result column="CVER" property="CVER" jdbcType="VARCHAR" />
+    <result column="REF_SYS_APP" property="REF_SYS_APP" jdbcType="CHAR" />
+    <result column="PARENT_ID" property="PARENT_ID" jdbcType="CHAR" />
+    <result column="ICON" property="ICON" jdbcType="VARCHAR" />
+    <result column="SEQ" property="SEQ" jdbcType="INTEGER" />
+    <result column="ISMENU" property="ISMENU" jdbcType="BIT" />
+    <result column="PERMISSION" property="PERMISSION" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="DESCRIPTION" jdbcType="VARCHAR" />
+    <result column="ISPROCESS" property="ISPROCESS" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hywa.bigdata.storage.entity.SysPermission" extends="BaseResultMap" >
+    <result column="URL" property="URL" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    GUID, CNAME, CCODE, CSTATUS, CREATEUSER, CREATEDATE, UPDATEUSER, UPDATEDATE, CVER, 
+    REF_SYS_APP, PARENT_ID, ICON, SEQ, ISMENU, PERMISSION, DESCRIPTION, ISPROCESS
+  </sql>
+  <sql id="Blob_Column_List" >
+    URL
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.hywa.bigdata.storage.entity.SysPermissionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hywa.bigdata.storage.entity.SysPermissionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_permission
+    where GUID = #{GUID,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_permission
+    where GUID = #{GUID,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hywa.bigdata.storage.entity.SysPermissionExample" >
+    delete from sys_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hywa.bigdata.storage.entity.SysPermission" >
+    insert into sys_permission (GUID, CNAME, CCODE, 
+      CSTATUS, CREATEUSER, CREATEDATE, 
+      UPDATEUSER, UPDATEDATE, CVER, 
+      REF_SYS_APP, PARENT_ID, ICON, 
+      SEQ, ISMENU, PERMISSION, 
+      DESCRIPTION, ISPROCESS, URL
+      )
+    values (#{GUID,jdbcType=CHAR}, #{CNAME,jdbcType=VARCHAR}, #{CCODE,jdbcType=VARCHAR}, 
+      #{CSTATUS,jdbcType=CHAR}, #{CREATEUSER,jdbcType=CHAR}, #{CREATEDATE,jdbcType=TIMESTAMP}, 
+      #{UPDATEUSER,jdbcType=CHAR}, #{UPDATEDATE,jdbcType=TIMESTAMP}, #{CVER,jdbcType=VARCHAR}, 
+      #{REF_SYS_APP,jdbcType=CHAR}, #{PARENT_ID,jdbcType=CHAR}, #{ICON,jdbcType=VARCHAR}, 
+      #{SEQ,jdbcType=INTEGER}, #{ISMENU,jdbcType=BIT}, #{PERMISSION,jdbcType=VARCHAR}, 
+      #{DESCRIPTION,jdbcType=VARCHAR}, #{ISPROCESS,jdbcType=CHAR}, #{URL,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hywa.bigdata.storage.entity.SysPermission" >
+    insert into sys_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="GUID != null" >
+        GUID,
+      </if>
+      <if test="CNAME != null" >
+        CNAME,
+      </if>
+      <if test="CCODE != null" >
+        CCODE,
+      </if>
+      <if test="CSTATUS != null" >
+        CSTATUS,
+      </if>
+      <if test="CREATEUSER != null" >
+        CREATEUSER,
+      </if>
+      <if test="CREATEDATE != null" >
+        CREATEDATE,
+      </if>
+      <if test="UPDATEUSER != null" >
+        UPDATEUSER,
+      </if>
+      <if test="UPDATEDATE != null" >
+        UPDATEDATE,
+      </if>
+      <if test="CVER != null" >
+        CVER,
+      </if>
+      <if test="REF_SYS_APP != null" >
+        REF_SYS_APP,
+      </if>
+      <if test="PARENT_ID != null" >
+        PARENT_ID,
+      </if>
+      <if test="ICON != null" >
+        ICON,
+      </if>
+      <if test="SEQ != null" >
+        SEQ,
+      </if>
+      <if test="ISMENU != null" >
+        ISMENU,
+      </if>
+      <if test="PERMISSION != null" >
+        PERMISSION,
+      </if>
+      <if test="DESCRIPTION != null" >
+        DESCRIPTION,
+      </if>
+      <if test="ISPROCESS != null" >
+        ISPROCESS,
+      </if>
+      <if test="URL != null" >
+        URL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="GUID != null" >
+        #{GUID,jdbcType=CHAR},
+      </if>
+      <if test="CNAME != null" >
+        #{CNAME,jdbcType=VARCHAR},
+      </if>
+      <if test="CCODE != null" >
+        #{CCODE,jdbcType=VARCHAR},
+      </if>
+      <if test="CSTATUS != null" >
+        #{CSTATUS,jdbcType=CHAR},
+      </if>
+      <if test="CREATEUSER != null" >
+        #{CREATEUSER,jdbcType=CHAR},
+      </if>
+      <if test="CREATEDATE != null" >
+        #{CREATEDATE,jdbcType=TIMESTAMP},
+      </if>
+      <if test="UPDATEUSER != null" >
+        #{UPDATEUSER,jdbcType=CHAR},
+      </if>
+      <if test="UPDATEDATE != null" >
+        #{UPDATEDATE,jdbcType=TIMESTAMP},
+      </if>
+      <if test="CVER != null" >
+        #{CVER,jdbcType=VARCHAR},
+      </if>
+      <if test="REF_SYS_APP != null" >
+        #{REF_SYS_APP,jdbcType=CHAR},
+      </if>
+      <if test="PARENT_ID != null" >
+        #{PARENT_ID,jdbcType=CHAR},
+      </if>
+      <if test="ICON != null" >
+        #{ICON,jdbcType=VARCHAR},
+      </if>
+      <if test="SEQ != null" >
+        #{SEQ,jdbcType=INTEGER},
+      </if>
+      <if test="ISMENU != null" >
+        #{ISMENU,jdbcType=BIT},
+      </if>
+      <if test="PERMISSION != null" >
+        #{PERMISSION,jdbcType=VARCHAR},
+      </if>
+      <if test="DESCRIPTION != null" >
+        #{DESCRIPTION,jdbcType=VARCHAR},
+      </if>
+      <if test="ISPROCESS != null" >
+        #{ISPROCESS,jdbcType=CHAR},
+      </if>
+      <if test="URL != null" >
+        #{URL,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hywa.bigdata.storage.entity.SysPermissionExample" resultType="java.lang.Integer" >
+    select count(*) from sys_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_permission
+    <set >
+      <if test="record.GUID != null" >
+        GUID = #{record.GUID,jdbcType=CHAR},
+      </if>
+      <if test="record.CNAME != null" >
+        CNAME = #{record.CNAME,jdbcType=VARCHAR},
+      </if>
+      <if test="record.CCODE != null" >
+        CCODE = #{record.CCODE,jdbcType=VARCHAR},
+      </if>
+      <if test="record.CSTATUS != null" >
+        CSTATUS = #{record.CSTATUS,jdbcType=CHAR},
+      </if>
+      <if test="record.CREATEUSER != null" >
+        CREATEUSER = #{record.CREATEUSER,jdbcType=CHAR},
+      </if>
+      <if test="record.CREATEDATE != null" >
+        CREATEDATE = #{record.CREATEDATE,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.UPDATEUSER != null" >
+        UPDATEUSER = #{record.UPDATEUSER,jdbcType=CHAR},
+      </if>
+      <if test="record.UPDATEDATE != null" >
+        UPDATEDATE = #{record.UPDATEDATE,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.CVER != null" >
+        CVER = #{record.CVER,jdbcType=VARCHAR},
+      </if>
+      <if test="record.REF_SYS_APP != null" >
+        REF_SYS_APP = #{record.REF_SYS_APP,jdbcType=CHAR},
+      </if>
+      <if test="record.PARENT_ID != null" >
+        PARENT_ID = #{record.PARENT_ID,jdbcType=CHAR},
+      </if>
+      <if test="record.ICON != null" >
+        ICON = #{record.ICON,jdbcType=VARCHAR},
+      </if>
+      <if test="record.SEQ != null" >
+        SEQ = #{record.SEQ,jdbcType=INTEGER},
+      </if>
+      <if test="record.ISMENU != null" >
+        ISMENU = #{record.ISMENU,jdbcType=BIT},
+      </if>
+      <if test="record.PERMISSION != null" >
+        PERMISSION = #{record.PERMISSION,jdbcType=VARCHAR},
+      </if>
+      <if test="record.DESCRIPTION != null" >
+        DESCRIPTION = #{record.DESCRIPTION,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ISPROCESS != null" >
+        ISPROCESS = #{record.ISPROCESS,jdbcType=CHAR},
+      </if>
+      <if test="record.URL != null" >
+        URL = #{record.URL,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update sys_permission
+    set GUID = #{record.GUID,jdbcType=CHAR},
+      CNAME = #{record.CNAME,jdbcType=VARCHAR},
+      CCODE = #{record.CCODE,jdbcType=VARCHAR},
+      CSTATUS = #{record.CSTATUS,jdbcType=CHAR},
+      CREATEUSER = #{record.CREATEUSER,jdbcType=CHAR},
+      CREATEDATE = #{record.CREATEDATE,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{record.UPDATEUSER,jdbcType=CHAR},
+      UPDATEDATE = #{record.UPDATEDATE,jdbcType=TIMESTAMP},
+      CVER = #{record.CVER,jdbcType=VARCHAR},
+      REF_SYS_APP = #{record.REF_SYS_APP,jdbcType=CHAR},
+      PARENT_ID = #{record.PARENT_ID,jdbcType=CHAR},
+      ICON = #{record.ICON,jdbcType=VARCHAR},
+      SEQ = #{record.SEQ,jdbcType=INTEGER},
+      ISMENU = #{record.ISMENU,jdbcType=BIT},
+      PERMISSION = #{record.PERMISSION,jdbcType=VARCHAR},
+      DESCRIPTION = #{record.DESCRIPTION,jdbcType=VARCHAR},
+      ISPROCESS = #{record.ISPROCESS,jdbcType=CHAR},
+      URL = #{record.URL,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_permission
+    set GUID = #{record.GUID,jdbcType=CHAR},
+      CNAME = #{record.CNAME,jdbcType=VARCHAR},
+      CCODE = #{record.CCODE,jdbcType=VARCHAR},
+      CSTATUS = #{record.CSTATUS,jdbcType=CHAR},
+      CREATEUSER = #{record.CREATEUSER,jdbcType=CHAR},
+      CREATEDATE = #{record.CREATEDATE,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{record.UPDATEUSER,jdbcType=CHAR},
+      UPDATEDATE = #{record.UPDATEDATE,jdbcType=TIMESTAMP},
+      CVER = #{record.CVER,jdbcType=VARCHAR},
+      REF_SYS_APP = #{record.REF_SYS_APP,jdbcType=CHAR},
+      PARENT_ID = #{record.PARENT_ID,jdbcType=CHAR},
+      ICON = #{record.ICON,jdbcType=VARCHAR},
+      SEQ = #{record.SEQ,jdbcType=INTEGER},
+      ISMENU = #{record.ISMENU,jdbcType=BIT},
+      PERMISSION = #{record.PERMISSION,jdbcType=VARCHAR},
+      DESCRIPTION = #{record.DESCRIPTION,jdbcType=VARCHAR},
+      ISPROCESS = #{record.ISPROCESS,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hywa.bigdata.storage.entity.SysPermission" >
+    update sys_permission
+    <set >
+      <if test="CNAME != null" >
+        CNAME = #{CNAME,jdbcType=VARCHAR},
+      </if>
+      <if test="CCODE != null" >
+        CCODE = #{CCODE,jdbcType=VARCHAR},
+      </if>
+      <if test="CSTATUS != null" >
+        CSTATUS = #{CSTATUS,jdbcType=CHAR},
+      </if>
+      <if test="CREATEUSER != null" >
+        CREATEUSER = #{CREATEUSER,jdbcType=CHAR},
+      </if>
+      <if test="CREATEDATE != null" >
+        CREATEDATE = #{CREATEDATE,jdbcType=TIMESTAMP},
+      </if>
+      <if test="UPDATEUSER != null" >
+        UPDATEUSER = #{UPDATEUSER,jdbcType=CHAR},
+      </if>
+      <if test="UPDATEDATE != null" >
+        UPDATEDATE = #{UPDATEDATE,jdbcType=TIMESTAMP},
+      </if>
+      <if test="CVER != null" >
+        CVER = #{CVER,jdbcType=VARCHAR},
+      </if>
+      <if test="REF_SYS_APP != null" >
+        REF_SYS_APP = #{REF_SYS_APP,jdbcType=CHAR},
+      </if>
+      <if test="PARENT_ID != null" >
+        PARENT_ID = #{PARENT_ID,jdbcType=CHAR},
+      </if>
+      <if test="ICON != null" >
+        ICON = #{ICON,jdbcType=VARCHAR},
+      </if>
+      <if test="SEQ != null" >
+        SEQ = #{SEQ,jdbcType=INTEGER},
+      </if>
+      <if test="ISMENU != null" >
+        ISMENU = #{ISMENU,jdbcType=BIT},
+      </if>
+      <if test="PERMISSION != null" >
+        PERMISSION = #{PERMISSION,jdbcType=VARCHAR},
+      </if>
+      <if test="DESCRIPTION != null" >
+        DESCRIPTION = #{DESCRIPTION,jdbcType=VARCHAR},
+      </if>
+      <if test="ISPROCESS != null" >
+        ISPROCESS = #{ISPROCESS,jdbcType=CHAR},
+      </if>
+      <if test="URL != null" >
+        URL = #{URL,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where GUID = #{GUID,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hywa.bigdata.storage.entity.SysPermission" >
+    update sys_permission
+    set CNAME = #{CNAME,jdbcType=VARCHAR},
+      CCODE = #{CCODE,jdbcType=VARCHAR},
+      CSTATUS = #{CSTATUS,jdbcType=CHAR},
+      CREATEUSER = #{CREATEUSER,jdbcType=CHAR},
+      CREATEDATE = #{CREATEDATE,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{UPDATEUSER,jdbcType=CHAR},
+      UPDATEDATE = #{UPDATEDATE,jdbcType=TIMESTAMP},
+      CVER = #{CVER,jdbcType=VARCHAR},
+      REF_SYS_APP = #{REF_SYS_APP,jdbcType=CHAR},
+      PARENT_ID = #{PARENT_ID,jdbcType=CHAR},
+      ICON = #{ICON,jdbcType=VARCHAR},
+      SEQ = #{SEQ,jdbcType=INTEGER},
+      ISMENU = #{ISMENU,jdbcType=BIT},
+      PERMISSION = #{PERMISSION,jdbcType=VARCHAR},
+      DESCRIPTION = #{DESCRIPTION,jdbcType=VARCHAR},
+      ISPROCESS = #{ISPROCESS,jdbcType=CHAR},
+      URL = #{URL,jdbcType=LONGVARCHAR}
+    where GUID = #{GUID,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hywa.bigdata.storage.entity.SysPermission" >
+    update sys_permission
+    set CNAME = #{CNAME,jdbcType=VARCHAR},
+      CCODE = #{CCODE,jdbcType=VARCHAR},
+      CSTATUS = #{CSTATUS,jdbcType=CHAR},
+      CREATEUSER = #{CREATEUSER,jdbcType=CHAR},
+      CREATEDATE = #{CREATEDATE,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{UPDATEUSER,jdbcType=CHAR},
+      UPDATEDATE = #{UPDATEDATE,jdbcType=TIMESTAMP},
+      CVER = #{CVER,jdbcType=VARCHAR},
+      REF_SYS_APP = #{REF_SYS_APP,jdbcType=CHAR},
+      PARENT_ID = #{PARENT_ID,jdbcType=CHAR},
+      ICON = #{ICON,jdbcType=VARCHAR},
+      SEQ = #{SEQ,jdbcType=INTEGER},
+      ISMENU = #{ISMENU,jdbcType=BIT},
+      PERMISSION = #{PERMISSION,jdbcType=VARCHAR},
+      DESCRIPTION = #{DESCRIPTION,jdbcType=VARCHAR},
+      ISPROCESS = #{ISPROCESS,jdbcType=CHAR}
+    where GUID = #{GUID,jdbcType=CHAR}
+  </update>
+
+  <select id="findTheBottomMenu" resultMap="BaseResultMap" >
+    select guid,cname,PARENT_ID from sys_permission a
+    where not exists(select parent_id from sys_permission b where b.parent_id=a.guid)
+    order By PARENT_ID DESC
+  </select>
+</mapper>

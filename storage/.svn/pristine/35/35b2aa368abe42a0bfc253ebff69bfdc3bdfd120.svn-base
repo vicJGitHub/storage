@@ -1,0 +1,324 @@
+package com.hywa.bigdata.storage.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hywa.bigdata.storage.common.AjaxJson;
+import com.hywa.bigdata.storage.common.ListKit;
+import com.hywa.bigdata.storage.common.MyBatisUtils;
+import com.hywa.bigdata.storage.entity.Orderdetail;
+import com.hywa.bigdata.storage.entity.OrderdetailExample;
+import com.hywa.bigdata.storage.entity.SysPermission;
+import com.hywa.bigdata.storage.entity.SysUser;
+import com.hywa.bigdata.storage.entity.TaskNodeInfo;
+import com.hywa.bigdata.storage.entity.User;
+import com.hywa.bigdata.storage.mapper.OrderdetailMapper;
+import com.hywa.bigdata.storage.mapper.RollBackOrderInfoMapper;
+import com.hywa.bigdata.storage.service.ActivitiService;
+import com.hywa.bigdata.storage.service.HiCompleteTaskService;
+import com.hywa.bigdata.storage.service.OrderdetailService;
+import com.hywa.bigdata.storage.service.SysPermissionService;
+import com.hywa.bigdata.storage.service.TaskNodeInfoService;
+
+import org.activiti.engine.impl.pvm.PvmActivity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+
+public class OrderdetailServiceImpl implements OrderdetailService {
+
+	@Autowired
+	OrderdetailMapper orderdetailMapper;
+
+	@Autowired
+	SysPermissionService sysPermissionService;
+
+	@Autowired
+	HiCompleteTaskService hiCompleteTaskService;
+
+	@Autowired
+	TaskNodeInfoService taskNodeInfoService;
+
+	@Autowired
+	RollBackOrderInfoMapper rollBackOrderInfoMapper;
+
+	@Autowired
+	ActivitiService activitiService;
+
+	@Value("${PickingOutHouseId}")
+	private String PickingOutHouseId;
+
+	@Value("${ProductionInHouseId}")
+	private String ProductionInHouseId;
+
+	@Value("${PurchaseInHouseId}")
+	private String PurchaseInHouseId;
+
+	@Value("${SalesReturnInHouseId}")
+	private String SalesReturnInHouseId;
+
+	@Value("${SellOutHouseId}")
+	private String SellOutHouseId;
+
+	@Value("${financePermission}")
+	private String financePermission;
+	
+	@Value("${financeCheckPermission}")
+	private String financeCheckPermission;
+
+	@Value("${warehousePermission}")
+	private String warehousePermission;
+
+	@Value("${CheckPending}")
+	private String CheckPendingId;
+
+	@Override
+	public List<Orderdetail> findByProcessId(String processId) {
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		criteria.andProcessIdEqualTo(processId);
+		criteria.andStateIn(Arrays.asList(0, 1));
+		return orderdetailMapper.selectByExample(orderdetailExample);
+	}
+
+	@Override
+	public Boolean updateOrderdetail(Orderdetail orderdetail) {
+		orderdetail.setOperator(null);
+		int result = orderdetailMapper.updateByPrimaryKeySelective(orderdetail);
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public Orderdetail findById(String id, Orderdetail orderdetail) {
+		// 根据 步骤 客户 物流编号 收货人 联系电话搜索
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		criteria.andIdEqualTo(id);
+		if (null != orderdetailMapper.selectByPrimaryKey(id).getState())
+			criteria.andStateNotEqualTo(4);
+		MyBatisUtils.conditionQuery(orderdetail, criteria);
+		List<Orderdetail> orderdetails = orderdetailMapper.selectByExample(orderdetailExample);
+		return ListKit.isEmpty(orderdetails) ? null : orderdetailMapper.selectByExample(orderdetailExample).get(0);
+	}
+
+	@Override
+	public List<Orderdetail> findByUpUserAndState(int page, int rows, AjaxJson ajaxJson, List<String> taskIds,
+			Orderdetail orderdetail) {
+		PageHelper.startPage(1, page * rows, "code desc");
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		orderdetailExample.setDistinct(true);
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		MyBatisUtils.conditionQuery(orderdetail, criteria);
+		criteria.andStateEqualTo(3);
+		criteria.andTaskIdIn(taskIds);
+		List<Orderdetail> list = orderdetailMapper.selectByExample(orderdetailExample);
+		PageInfo pageInfo = new PageInfo<>(list);
+		ajaxJson.setTotal((int) pageInfo.getTotal() + ajaxJson.getTotal());
+		return list;
+	}
+
+	@Override
+	public List<Orderdetail> findByCurrentStepAndState(int page, int rows, AjaxJson ajaxJson, List<String> currentSteps,
+			Orderdetail orderdetail) {
+		PageHelper.startPage(1, page * rows, "code desc");
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		orderdetailExample.setDistinct(true);
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		criteria.andStateEqualTo(2);
+		criteria.andCurrentStepIn(currentSteps);
+		MyBatisUtils.conditionQuery(orderdetail, criteria);
+		List<Orderdetail> list = orderdetailMapper.selectByExample(orderdetailExample);
+		PageInfo pageInfo = new PageInfo<>(list);
+		ajaxJson.setTotal((int) pageInfo.getTotal() + ajaxJson.getTotal());
+		return list;
+	}
+
+	@Override
+	public List<Orderdetail> findByCreateUser(int page, int rows, AjaxJson ajaxJson, String createUser,
+			String processId, Orderdetail orderdetail) {
+		PageHelper.startPage(1, page * rows, "code desc");
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		orderdetailExample.setDistinct(true);
+		criteria.andCreateUserEqualTo(createUser);
+		criteria.andProcessIdEqualTo(processId);
+		criteria.andSubmitTypeEqualTo(true);
+		criteria.andStateNotEqualTo(4);
+		MyBatisUtils.conditionQuery(orderdetail, criteria);
+		List<Orderdetail> list = orderdetailMapper.selectByExample(orderdetailExample);
+		PageInfo pageInfo = new PageInfo<>(list);
+		ajaxJson.setTotal((int) pageInfo.getTotal() + ajaxJson.getTotal());
+		return list;
+	}
+
+	@Override
+	public List<Map<String, Object>> findUnfinished(User user) {
+		return orderdetailMapper.findUnfinished(user.getId(),user.getRefSysDepartment());
+	}
+
+	@Override
+	public Map<String, Object> adminUserTask() {
+		// 销售监控的信息 销售单 退货单
+		Map<String, Object> market = new HashMap<>();
+		//*******************销售
+		market.put("marketToBeCompleted",
+				orderdetailMapper.findRollBackOrderdetail(SellOutHouseId, SalesReturnInHouseId));
+		market.put("marketTodayCompleted",
+				rollBackOrderInfoMapper.completeRollBackOderdetail(SellOutHouseId, SalesReturnInHouseId));
+		// *******************生产
+		market.put("productionToBeCompleted",
+				orderdetailMapper.findRollBackOrderdetail(ProductionInHouseId, PickingOutHouseId));
+		market.put("productionTodayCompleted",
+				rollBackOrderInfoMapper.completeRollBackOderdetail(ProductionInHouseId, PickingOutHouseId));
+		// ***********************采购
+		market.put("procurementToBeCompleted", orderdetailMapper.findRollBackOrderdetail(PurchaseInHouseId, null));
+		market.put("procurementTodayCompleted",
+				rollBackOrderInfoMapper.completeRollBackOderdetail(PurchaseInHouseId, null));
+		// ****************财务
+		List<String> list = new ArrayList<>();
+		List<String> recursionFinance = recursionPermission(financePermission, list);
+		market.put("financeToBeCompleted", orderdetailMapper.findToBeCompletedCount(recursionFinance));
+		market.put("financeTodayCompleted", hiCompleteTaskService.findCount(recursionFinance));
+		// **********************仓库
+		list.clear();
+		List<String> recursionWarehouse = recursionPermission(warehousePermission, list);
+		market.put("warehouseToBeCompleted", orderdetailMapper.findToBeCompletedCount(recursionWarehouse));
+		market.put("warehouseTodayCompleted", hiCompleteTaskService.findCount(recursionWarehouse));
+
+		return market;
+	}
+
+	// 递归方法用于获取子节点
+	public List<String> recursionPermission(String parentId, List<String> list) {
+		// 查询子节点
+		List<SysPermission> sysPermissions = sysPermissionService.findByParentId(parentId);
+		// 子节点不为空,继续查
+		if (!ListKit.isEmpty(sysPermissions)) {
+			sysPermissions.forEach(sysPermission -> {
+				list.add(sysPermission.getGUID());
+				recursionPermission(sysPermission.getGUID(), list);
+			});
+		}
+		return list;
+	}
+
+	@Override
+	public List<SysUser> findOperatorAll(String processId) {
+		return orderdetailMapper.findOperatorAll(processId);
+	}
+
+	@Override
+	public List<Orderdetail> findByStateSave(int page, int rows, AjaxJson ajaxJson, List<String> taskIds,
+			String createUser, Orderdetail orderdetail) {
+		PageHelper.startPage(1, page * rows, "code desc");
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		criteria.andTaskIdIn(taskIds);
+		criteria.andSubmitTypeEqualTo(false);
+		criteria.andCreateUserEqualTo(createUser);
+		// criteria.andStateNotEqualTo(4);
+		MyBatisUtils.conditionQuery(orderdetail, criteria);
+		List<Orderdetail> list = orderdetailMapper.selectByExample(orderdetailExample);
+		PageInfo pageInfo = new PageInfo<>(list);
+		ajaxJson.setTotal((int) pageInfo.getTotal() + ajaxJson.getTotal());
+		return list;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		OrderdetailExample orderdetailExample = new OrderdetailExample();
+		OrderdetailExample.Criteria criteria = orderdetailExample.createCriteria();
+		Calendar todayStart = Calendar.getInstance();
+		todayStart.set(Calendar.HOUR_OF_DAY, 0);
+		todayStart.set(Calendar.MINUTE, 0);
+		todayStart.set(Calendar.SECOND, 0);
+		todayStart.set(Calendar.MILLISECOND, 0);
+		Calendar todayEnd = Calendar.getInstance();
+		todayEnd.set(Calendar.HOUR_OF_DAY, 23);
+		todayEnd.set(Calendar.MINUTE, 59);
+		todayEnd.set(Calendar.SECOND, 59);
+		todayEnd.set(Calendar.MILLISECOND, 999);
+		criteria.andCreateTimeBetween(todayStart.getTime(), todayEnd.getTime());
+		int i = orderdetailMapper.countByExample(orderdetailExample);
+		return i > 0 ? false : true;
+	}
+
+	@Override
+	public Long findMaxCode() {
+		return Long.parseLong(orderdetailMapper.findMaxCode());
+	}
+
+	@Override
+	public boolean delFirstOrder(String id, String processId, String opinion) {
+		TaskNodeInfo firstTask = taskNodeInfoService.findTaskNodeInfos(processId).get(0);
+		Orderdetail oldOrderdetail = orderdetailMapper.selectByPrimaryKey(id);
+		oldOrderdetail.setSubmitType(false);
+		oldOrderdetail.setState(null);
+		oldOrderdetail.setStatus(0);
+		oldOrderdetail.setTaskId(firstTask.getId());
+		oldOrderdetail.setCurrentStep(firstTask.getName());
+		oldOrderdetail.setOpinion(opinion);
+		int result = orderdetailMapper.updateByPrimaryKey(oldOrderdetail);
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public Map<String, Object> findAllCheckPendingOrder(Map<String, Object> map) {
+		int PurchaseInHouseOrder = findCheckPendingOrder(PurchaseInHouseId);
+		map.put("PurchaseInHouseOrder", PurchaseInHouseOrder);
+		map.put("PurchaseInHouse", (int)map.get("PurchaseInHouse")-PurchaseInHouseOrder);
+		int ProductionInHouseOrder = findCheckPendingOrder(ProductionInHouseId);
+		map.put("ProductionInHouseOrder", ProductionInHouseOrder);
+		int SalesReturnInHouseOrder = findCheckPendingOrder(SalesReturnInHouseId);
+		map.put("SalesReturnInHouseOrder", SalesReturnInHouseOrder);
+		int SellOutHouseOrder = findCheckPendingOrder(SellOutHouseId);
+		map.put("SellOutHouseOrder", SellOutHouseOrder);
+		map.put("SellOutHouse", (int)map.get("SellOutHouse")-SellOutHouseOrder);
+		int PickingOutHouseOrder = findCheckPendingOrder(PickingOutHouseId);
+		map.put("PickingOutHouseOrder", PickingOutHouseOrder);
+		map.put("PickingOutHouse", (int)map.get("PickingOutHouse")-PickingOutHouseOrder);
+		int CheckPending = orderdetailMapper.findToBeCompletedCount(Arrays.asList(CheckPendingId));
+		map.put("CheckPending", CheckPending);
+		return map;
+	}
+
+	private int findCheckPendingOrder(String processId) {
+		List<Orderdetail> orderdetails = findByProcessId(processId);
+		int PurchaseInHouseOrder = 0;
+		for (Orderdetail orderdetail : orderdetails) {
+			if (!StringUtils.isEmpty(orderdetail.getTaskKey())) {
+				PvmActivity nextNode = activitiService.getNextNode(orderdetail.getTaskKey());
+				if (null != nextNode && "endEvent".equals((String) nextNode.getProperty("type"))) {
+					PurchaseInHouseOrder++;
+				}
+			}
+		}
+		return PurchaseInHouseOrder;
+	}
+
+	@Override
+	public Map<String, Object> findUnfinishedByProcessId(Map<String, Object> map, User user) {
+		map.put("financePurchaseInHouse", orderdetailMapper.findUnfinishedByProcessId(financeCheckPermission, PurchaseInHouseId, user.getId(), user.getRefSysDepartment()));
+		map.put("financeSellOutHouse", orderdetailMapper.findUnfinishedByProcessId(financeCheckPermission, SellOutHouseId, user.getId(), user.getRefSysDepartment()));
+		map.put("financeSalesReturnInHouse", orderdetailMapper.findUnfinishedByProcessId(financeCheckPermission, SalesReturnInHouseId, user.getId(), user.getRefSysDepartment()));
+		return map;
+	}
+
+	@Override
+	public boolean checkTrackingNumber(String trackingNumber) {
+		OrderdetailExample orderdetailExample=new OrderdetailExample();
+		orderdetailExample.createCriteria().andTrackingNumberEqualTo(trackingNumber);
+		return orderdetailMapper.countByExample(orderdetailExample)>0?true:false;
+	}
+}

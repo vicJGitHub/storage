@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hywa.bigdata.storage.mapper.SysDepartmentMapper" >
+  <resultMap id="BaseResultMap" type="com.hywa.bigdata.storage.entity.SysDepartment" >
+    <id column="GUID" property="guid" jdbcType="CHAR" />
+    <result column="CNAME" property="cname" jdbcType="VARCHAR" />
+    <result column="CCODE" property="ccode" jdbcType="VARCHAR" />
+    <result column="CSTATUS" property="cstatus" jdbcType="CHAR" />
+    <result column="CREATEUSER" property="createuser" jdbcType="CHAR" />
+    <result column="CREATEDATE" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="UPDATEUSER" property="updateuser" jdbcType="CHAR" />
+    <result column="UPDATEDATE" property="updatedate" jdbcType="TIMESTAMP" />
+    <result column="CVER" property="cver" jdbcType="VARCHAR" />
+    <result column="REF_SYS_APP" property="refSysApp" jdbcType="CHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="CHAR" />
+    <result column="REF_SYS_USER" property="refSysUser" jdbcType="CHAR" />
+    <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hywa.bigdata.storage.entity.SysDepartment" extends="BaseResultMap" >
+    <result column="CDESC" property="cdesc" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    GUID, CNAME, CCODE, CSTATUS, CREATEUSER, CREATEDATE, UPDATEUSER, UPDATEDATE, CVER, 
+    REF_SYS_APP, PARENT_ID, REF_SYS_USER, PHONE
+  </sql>
+  <sql id="Blob_Column_List" >
+    CDESC
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.hywa.bigdata.storage.entity.SysDepartmentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+
+
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hywa.bigdata.storage.entity.SysDepartmentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_department
+    where GUID = #{guid,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_department
+    where GUID = #{guid,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hywa.bigdata.storage.entity.SysDepartmentExample" >
+    delete from sys_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hywa.bigdata.storage.entity.SysDepartment" >
+    insert into sys_department (GUID, CNAME, CCODE, 
+      CSTATUS, CREATEUSER, CREATEDATE, 
+      UPDATEUSER, UPDATEDATE, CVER, 
+      REF_SYS_APP, PARENT_ID, REF_SYS_USER, 
+      PHONE, CDESC)
+    values (#{guid,jdbcType=CHAR}, #{cname,jdbcType=VARCHAR}, #{ccode,jdbcType=VARCHAR}, 
+      #{cstatus,jdbcType=CHAR}, #{createuser,jdbcType=CHAR}, #{createdate,jdbcType=TIMESTAMP}, 
+      #{updateuser,jdbcType=CHAR}, #{updatedate,jdbcType=TIMESTAMP}, #{cver,jdbcType=VARCHAR}, 
+      #{refSysApp,jdbcType=CHAR}, #{parentId,jdbcType=CHAR}, #{refSysUser,jdbcType=CHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{cdesc,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hywa.bigdata.storage.entity.SysDepartment" >
+    insert into sys_department
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="guid != null" >
+        GUID,
+      </if>
+      <if test="cname != null" >
+        CNAME,
+      </if>
+      <if test="ccode != null" >
+        CCODE,
+      </if>
+      <if test="cstatus != null" >
+        CSTATUS,
+      </if>
+      <if test="createuser != null" >
+        CREATEUSER,
+      </if>
+      <if test="createdate != null" >
+        CREATEDATE,
+      </if>
+      <if test="updateuser != null" >
+        UPDATEUSER,
+      </if>
+      <if test="updatedate != null" >
+        UPDATEDATE,
+      </if>
+      <if test="cver != null" >
+        CVER,
+      </if>
+      <if test="refSysApp != null" >
+        REF_SYS_APP,
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID,
+      </if>
+      <if test="refSysUser != null" >
+        REF_SYS_USER,
+      </if>
+      <if test="phone != null" >
+        PHONE,
+      </if>
+      <if test="cdesc != null" >
+        CDESC,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="guid != null" >
+        #{guid,jdbcType=CHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="ccode != null" >
+        #{ccode,jdbcType=VARCHAR},
+      </if>
+      <if test="cstatus != null" >
+        #{cstatus,jdbcType=CHAR},
+      </if>
+      <if test="createuser != null" >
+        #{createuser,jdbcType=CHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null" >
+        #{updateuser,jdbcType=CHAR},
+      </if>
+      <if test="updatedate != null" >
+        #{updatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cver != null" >
+        #{cver,jdbcType=VARCHAR},
+      </if>
+      <if test="refSysApp != null" >
+        #{refSysApp,jdbcType=CHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=CHAR},
+      </if>
+      <if test="refSysUser != null" >
+        #{refSysUser,jdbcType=CHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="cdesc != null" >
+        #{cdesc,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hywa.bigdata.storage.entity.SysDepartmentExample" resultType="java.lang.Integer" >
+    select count(*) from sys_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_department
+    <set >
+      <if test="record.guid != null" >
+        GUID = #{record.guid,jdbcType=CHAR},
+      </if>
+      <if test="record.cname != null" >
+        CNAME = #{record.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ccode != null" >
+        CCODE = #{record.ccode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cstatus != null" >
+        CSTATUS = #{record.cstatus,jdbcType=CHAR},
+      </if>
+      <if test="record.createuser != null" >
+        CREATEUSER = #{record.createuser,jdbcType=CHAR},
+      </if>
+      <if test="record.createdate != null" >
+        CREATEDATE = #{record.createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateuser != null" >
+        UPDATEUSER = #{record.updateuser,jdbcType=CHAR},
+      </if>
+      <if test="record.updatedate != null" >
+        UPDATEDATE = #{record.updatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.cver != null" >
+        CVER = #{record.cver,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refSysApp != null" >
+        REF_SYS_APP = #{record.refSysApp,jdbcType=CHAR},
+      </if>
+      <if test="record.parentId != null" >
+        PARENT_ID = #{record.parentId,jdbcType=CHAR},
+      </if>
+      <if test="record.refSysUser != null" >
+        REF_SYS_USER = #{record.refSysUser,jdbcType=CHAR},
+      </if>
+      <if test="record.phone != null" >
+        PHONE = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cdesc != null" >
+        CDESC = #{record.cdesc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update sys_department
+    set GUID = #{record.guid,jdbcType=CHAR},
+      CNAME = #{record.cname,jdbcType=VARCHAR},
+      CCODE = #{record.ccode,jdbcType=VARCHAR},
+      CSTATUS = #{record.cstatus,jdbcType=CHAR},
+      CREATEUSER = #{record.createuser,jdbcType=CHAR},
+      CREATEDATE = #{record.createdate,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{record.updateuser,jdbcType=CHAR},
+      UPDATEDATE = #{record.updatedate,jdbcType=TIMESTAMP},
+      CVER = #{record.cver,jdbcType=VARCHAR},
+      REF_SYS_APP = #{record.refSysApp,jdbcType=CHAR},
+      PARENT_ID = #{record.parentId,jdbcType=CHAR},
+      REF_SYS_USER = #{record.refSysUser,jdbcType=CHAR},
+      PHONE = #{record.phone,jdbcType=VARCHAR},
+      CDESC = #{record.cdesc,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_department
+    set GUID = #{record.guid,jdbcType=CHAR},
+      CNAME = #{record.cname,jdbcType=VARCHAR},
+      CCODE = #{record.ccode,jdbcType=VARCHAR},
+      CSTATUS = #{record.cstatus,jdbcType=CHAR},
+      CREATEUSER = #{record.createuser,jdbcType=CHAR},
+      CREATEDATE = #{record.createdate,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{record.updateuser,jdbcType=CHAR},
+      UPDATEDATE = #{record.updatedate,jdbcType=TIMESTAMP},
+      CVER = #{record.cver,jdbcType=VARCHAR},
+      REF_SYS_APP = #{record.refSysApp,jdbcType=CHAR},
+      PARENT_ID = #{record.parentId,jdbcType=CHAR},
+      REF_SYS_USER = #{record.refSysUser,jdbcType=CHAR},
+      PHONE = #{record.phone,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hywa.bigdata.storage.entity.SysDepartment" >
+    update sys_department
+    <set >
+      <if test="cname != null" >
+        CNAME = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="ccode != null" >
+        CCODE = #{ccode,jdbcType=VARCHAR},
+      </if>
+      <if test="cstatus != null" >
+        CSTATUS = #{cstatus,jdbcType=CHAR},
+      </if>
+      <if test="createuser != null" >
+        CREATEUSER = #{createuser,jdbcType=CHAR},
+      </if>
+      <if test="createdate != null" >
+        CREATEDATE = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null" >
+        UPDATEUSER = #{updateuser,jdbcType=CHAR},
+      </if>
+      <if test="updatedate != null" >
+        UPDATEDATE = #{updatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cver != null" >
+        CVER = #{cver,jdbcType=VARCHAR},
+      </if>
+      <if test="refSysApp != null" >
+        REF_SYS_APP = #{refSysApp,jdbcType=CHAR},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=CHAR},
+      </if>
+      <if test="refSysUser != null" >
+        REF_SYS_USER = #{refSysUser,jdbcType=CHAR},
+      </if>
+      <if test="phone != null" >
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="cdesc != null" >
+        CDESC = #{cdesc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where GUID = #{guid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hywa.bigdata.storage.entity.SysDepartment" >
+    update sys_department
+    set CNAME = #{cname,jdbcType=VARCHAR},
+      CCODE = #{ccode,jdbcType=VARCHAR},
+      CSTATUS = #{cstatus,jdbcType=CHAR},
+      CREATEUSER = #{createuser,jdbcType=CHAR},
+      CREATEDATE = #{createdate,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{updateuser,jdbcType=CHAR},
+      UPDATEDATE = #{updatedate,jdbcType=TIMESTAMP},
+      CVER = #{cver,jdbcType=VARCHAR},
+      REF_SYS_APP = #{refSysApp,jdbcType=CHAR},
+      PARENT_ID = #{parentId,jdbcType=CHAR},
+      REF_SYS_USER = #{refSysUser,jdbcType=CHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      CDESC = #{cdesc,jdbcType=LONGVARCHAR}
+    where GUID = #{guid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hywa.bigdata.storage.entity.SysDepartment" >
+    update sys_department
+    set CNAME = #{cname,jdbcType=VARCHAR},
+      CCODE = #{ccode,jdbcType=VARCHAR},
+      CSTATUS = #{cstatus,jdbcType=CHAR},
+      CREATEUSER = #{createuser,jdbcType=CHAR},
+      CREATEDATE = #{createdate,jdbcType=TIMESTAMP},
+      UPDATEUSER = #{updateuser,jdbcType=CHAR},
+      UPDATEDATE = #{updatedate,jdbcType=TIMESTAMP},
+      CVER = #{cver,jdbcType=VARCHAR},
+      REF_SYS_APP = #{refSysApp,jdbcType=CHAR},
+      PARENT_ID = #{parentId,jdbcType=CHAR},
+      REF_SYS_USER = #{refSysUser,jdbcType=CHAR},
+      PHONE = #{phone,jdbcType=VARCHAR}
+    where GUID = #{guid,jdbcType=CHAR}
+  </update>
+</mapper>

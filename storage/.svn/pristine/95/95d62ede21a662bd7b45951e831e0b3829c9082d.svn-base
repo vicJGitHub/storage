@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hywa.bigdata.storage.mapper.RuTaskNodeInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hywa.bigdata.storage.entity.RuTaskNodeInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="isShow" property="isShow" jdbcType="INTEGER" />
+    <result column="processId" property="processId" jdbcType="VARCHAR" />
+    <result column="stepType" property="stepType" jdbcType="INTEGER" />
+    <result column="menuPosition" property="menuPosition" jdbcType="VARCHAR" />
+    <result column="assignee" property="assignee" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="department" property="department" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="updateUser" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, name, isShow, processId, stepType, menuPosition, assignee, remark, sort, createTime, 
+    department, updateTime, createUser, updateUser
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ru_task_node_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ru_task_node_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ru_task_node_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfoExample" >
+    delete from ru_task_node_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfo" >
+    insert into ru_task_node_info (id, name, isShow, 
+      processId, stepType, menuPosition, 
+      assignee, remark, sort, 
+      createTime, department, updateTime, 
+      createUser, updateUser)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{isShow,jdbcType=INTEGER}, 
+      #{processId,jdbcType=VARCHAR}, #{stepType,jdbcType=INTEGER}, #{menuPosition,jdbcType=VARCHAR}, 
+      #{assignee,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{department,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfo" >
+    insert into ru_task_node_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="isShow != null" >
+        isShow,
+      </if>
+      <if test="processId != null" >
+        processId,
+      </if>
+      <if test="stepType != null" >
+        stepType,
+      </if>
+      <if test="menuPosition != null" >
+        menuPosition,
+      </if>
+      <if test="assignee != null" >
+        assignee,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="department != null" >
+        department,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="updateUser != null" >
+        updateUser,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        #{isShow,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="stepType != null" >
+        #{stepType,jdbcType=INTEGER},
+      </if>
+      <if test="menuPosition != null" >
+        #{menuPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="assignee != null" >
+        #{assignee,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="department != null" >
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfoExample" resultType="java.lang.Integer" >
+    select count(*) from ru_task_node_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ru_task_node_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isShow != null" >
+        isShow = #{record.isShow,jdbcType=INTEGER},
+      </if>
+      <if test="record.processId != null" >
+        processId = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stepType != null" >
+        stepType = #{record.stepType,jdbcType=INTEGER},
+      </if>
+      <if test="record.menuPosition != null" >
+        menuPosition = #{record.menuPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assignee != null" >
+        assignee = #{record.assignee,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sort != null" >
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.department != null" >
+        department = #{record.department,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        createUser = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateUser != null" >
+        updateUser = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ru_task_node_info
+    set id = #{record.id,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      isShow = #{record.isShow,jdbcType=INTEGER},
+      processId = #{record.processId,jdbcType=VARCHAR},
+      stepType = #{record.stepType,jdbcType=INTEGER},
+      menuPosition = #{record.menuPosition,jdbcType=VARCHAR},
+      assignee = #{record.assignee,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      sort = #{record.sort,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      department = #{record.department,jdbcType=VARCHAR},
+      updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      createUser = #{record.createUser,jdbcType=VARCHAR},
+      updateUser = #{record.updateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfo" >
+    update ru_task_node_info
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        isShow = #{isShow,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null" >
+        processId = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="stepType != null" >
+        stepType = #{stepType,jdbcType=INTEGER},
+      </if>
+      <if test="menuPosition != null" >
+        menuPosition = #{menuPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="assignee != null" >
+        assignee = #{assignee,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="department != null" >
+        department = #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        updateUser = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hywa.bigdata.storage.entity.RuTaskNodeInfo" >
+    update ru_task_node_info
+    set name = #{name,jdbcType=VARCHAR},
+      isShow = #{isShow,jdbcType=INTEGER},
+      processId = #{processId,jdbcType=VARCHAR},
+      stepType = #{stepType,jdbcType=INTEGER},
+      menuPosition = #{menuPosition,jdbcType=VARCHAR},
+      assignee = #{assignee,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      department = #{department,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      updateUser = #{updateUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  	<select id="findMenuByAssigne" resultType="java.lang.String">
+		select DISTINCT menuPosition FROM
+		ru_task_node_info
+		WHERE
+		sort=1
+		AND
+		assignee LIKE CONCAT(CONCAT('%',#{assignee}),'%')
+		OR
+		department LIKE CONCAT(CONCAT('%',#{department}),'%')
+	</select>
+</mapper>

@@ -1,0 +1,53 @@
+package com.hywa.bigdata.storage.controller.validate.processValidate;
+
+import com.hywa.bigdata.storage.common.AjaxJson;
+import com.hywa.bigdata.storage.common.ListKit;
+import com.hywa.bigdata.storage.common.SpringContext;
+import com.hywa.bigdata.storage.entity.TaskNodeInfo;
+import com.hywa.bigdata.storage.service.HomepageHandleDesigningService;
+import com.hywa.bigdata.storage.service.OrderFieldDesigningService;
+import com.hywa.bigdata.storage.service.OrderHandleDesigningService;
+import com.hywa.bigdata.storage.service.TaskNodeInfoService;
+import com.hywa.bigdata.storage.validate.Validator;
+import javafx.concurrent.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+
+
+public class DeployValidate extends Validator<String> {
+
+    @Override
+    public AjaxJson validate(String baseProcessInfoId) {
+        //拉取对应方法的参数
+        if (StringUtils.isEmpty(baseProcessInfoId)) {
+            return new AjaxJson(1,"流程id不能为空");
+        }
+        TaskNodeInfoService taskNodeInfoService = (TaskNodeInfoService) SpringContext.getBean("taskNodeInfoServiceImpl");
+        List<TaskNodeInfo> taskNodeInfoAll = taskNodeInfoService.findTaskNodeInfoAll(baseProcessInfoId);
+        if (ListKit.isEmpty(taskNodeInfoAll)) {
+            return new AjaxJson(1, "未配置流程下的节点,无法发布流程");
+        }else{
+            for (TaskNodeInfo taskNodeInfo : taskNodeInfoAll) {//判断节点下是否配置了表单
+            	if(StringUtils.isEmpty(taskNodeInfo.getAssignee())&&StringUtils.isEmpty(taskNodeInfo.getDepartment()))return new AjaxJson(1,taskNodeInfo.getName()+"下经办人不能为空");
+            	if(StringUtils.isEmpty(taskNodeInfo.getMenuPosition()))return new AjaxJson(1,taskNodeInfo.getName()+"下菜单不能为空");
+                HomepageHandleDesigningService homepageHandleDesigningService = (HomepageHandleDesigningService) SpringContext.getBean("homepageHandleDesigningServiceImpl");
+                if (ListKit.isEmpty(homepageHandleDesigningService.findByTaskId(taskNodeInfo.getId()))) {
+                    return new AjaxJson(1, taskNodeInfo.getName()+"下必须配置节点下的主页设计信息");
+                }
+                OrderHandleDesigningService orderHandleDesigningService = (OrderHandleDesigningService) SpringContext.getBean("orderHandleDesigningServiceImpl");
+                if (ListKit.isEmpty(orderHandleDesigningService.findOrderHandleDesigning(taskNodeInfo.getId()))) {
+                    return new AjaxJson(1, taskNodeInfo.getName()+"下必须配置节点下的办理页操作信息");
+                }
+                OrderFieldDesigningService orderFieldDesigningService = (OrderFieldDesigningService) SpringContext.getBean("orderFieldDesigningServiceImpl");
+                if (ListKit.isEmpty(orderFieldDesigningService.findOrderFieldDesigning(taskNodeInfo.getId()))) {
+                    return new AjaxJson(1,taskNodeInfo.getName()+ "下必须配置节点下的办理页显示信息");
+                }
+            }
+        }
+        return null;
+    }
+
+
+}

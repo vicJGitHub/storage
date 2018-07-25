@@ -1,0 +1,151 @@
+package com.hywa.bigdata.storage.service.impl;
+
+
+import com.hywa.bigdata.storage.common.AjaxJson;
+import com.hywa.bigdata.storage.common.IDUtils;
+import com.hywa.bigdata.storage.common.ListKit;
+import com.hywa.bigdata.storage.entity.*;
+import com.hywa.bigdata.storage.mapper.RuTaskNodeInfoMapper;
+import com.hywa.bigdata.storage.mapper.TaskNodeInfoMapper;
+import com.hywa.bigdata.storage.service.*;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.*;
+
+/**
+ * <p>
+ * 任务节点信息 服务实现类
+ * </p>
+ *
+ * @author vic
+ * @since 2018-05-30
+ */
+@Service
+public class RuTaskNodeInfoServiceImpl implements RuTaskNodeInfoService {
+
+    @Autowired
+    TaskNodeInfoMapper taskNodeInfoMapper;
+
+    @Autowired
+    RuTaskNodeInfoMapper ruTaskNodeInfoMapper;
+
+    @Autowired
+    SysUserService SysUserService;
+
+    @Autowired
+    RuHomepageHandleDesigningService ruHomepageHandleDesigningService;
+
+    @Autowired
+    RuOrderFieldDesigningService ruOrderFieldDesigningService;
+
+    @Autowired
+    RuOrderHandleDesigningService ruOrderHandleDesigningService;
+
+    //查询任务节点
+    @Override
+    public List<RuTaskNodeInfo> findTaskNodeInfos(String processId) {
+        RuTaskNodeInfoExample ruTaskNodeInfoExample = new RuTaskNodeInfoExample();
+        ruTaskNodeInfoExample.createCriteria().andStepTypeIn(Arrays.asList(0, 1))
+                .andProcessIdEqualTo(processId)
+                .andNameNotEqualTo("删除审核");
+        ruTaskNodeInfoExample.setOrderByClause("sort");
+        List<RuTaskNodeInfo> taskNodeInfos = ruTaskNodeInfoMapper.selectByExample(ruTaskNodeInfoExample);
+        return taskNodeInfos;
+    }
+
+    @Override
+    public RuTaskNodeInfo findByMenuPosition(String menuPosition) {
+        RuTaskNodeInfoExample ruTaskNodeInfoExample = new RuTaskNodeInfoExample();
+        ruTaskNodeInfoExample.setOrderByClause("sort");
+        ruTaskNodeInfoExample.createCriteria().andStepTypeEqualTo(0)
+                .andMenuPositionEqualTo(menuPosition);
+        List<RuTaskNodeInfo> taskNodeInfos = ruTaskNodeInfoMapper.selectByExample(ruTaskNodeInfoExample);
+        //简单的非空判断
+        return null != taskNodeInfos && taskNodeInfos.size() > 0 ? taskNodeInfos.get(0) : null;
+    }
+
+    @Override
+    public RuTaskNodeInfo findById(String id) {
+        return ruTaskNodeInfoMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<RuTaskNodeInfo> findAllByProcessId(String processId, String taskId) {
+        RuTaskNodeInfoExample taskNodeInfoExample = new RuTaskNodeInfoExample();
+        RuTaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        criteria.andProcessIdEqualTo(processId);
+        taskNodeInfoExample.setOrderByClause("sort");
+        if (!StringUtils.isEmpty(taskId)) criteria.andIdEqualTo(taskId);
+        return ruTaskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+    }
+
+    public List<String> findMenuByAssigne(String assignee) {
+        RuTaskNodeInfoExample taskNodeInfoExample = new RuTaskNodeInfoExample();
+        RuTaskNodeInfoExample.Criteria criteria = taskNodeInfoExample.createCriteria();
+        criteria.andAssigneeLike("%" + assignee + "%");
+        criteria.andSortEqualTo(1);
+        List<RuTaskNodeInfo> taskNodeInfos = ruTaskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        taskNodeInfoExample.clear();
+        RuTaskNodeInfoExample.Criteria criteria1 = taskNodeInfoExample.createCriteria();
+        criteria1.andDepartmentLike("%" + SysUserService.findRefSysDepartmentById(assignee) + "%");
+        criteria1.andSortEqualTo(1);
+        taskNodeInfos.addAll(ruTaskNodeInfoMapper.selectByExample(taskNodeInfoExample));
+        List<String> menus = new ArrayList<>();
+        taskNodeInfos.forEach(a -> menus.add(a.getMenuPosition()));
+        return menus;
+    }
+
+    public String findNameById(String id) {
+        return ruTaskNodeInfoMapper.selectByPrimaryKey(id).getName();
+    }
+
+    @Override
+    public Boolean updateRuTaskInfo(String processId) {
+        TaskNodeInfoExample taskNodeInfoExample = new TaskNodeInfoExample();
+        new TaskNodeInfoExample().createCriteria().andProcessIdEqualTo(processId);
+        List<TaskNodeInfo> taskNodeInfos = taskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        int count = 0;
+        RuTaskNodeInfo ruTaskNodeInfo = new RuTaskNodeInfo();
+        List<String>ids=new ArrayList<String>();
+        for (TaskNodeInfo taskNodeInfo : taskNodeInfos) {
+        	ids.add(taskNodeInfo.getId());
+            ruHomepageHandleDesigningService.updateRuHomepageHandleDesigning(taskNodeInfo.getId());
+            ruOrderFieldDesigningService.updateRuOrderFieldDesigning(taskNodeInfo.getId());
+            ruOrderHandleDesigningService.updateRuOrderHandleDesigning(taskNodeInfo.getId());
+            BeanUtils.copyProperties(taskNodeInfo, ruTaskNodeInfo);
+            if(1!=ruTaskNodeInfoMapper.updateByPrimaryKey(ruTaskNodeInfo)) {
+            	ruTaskNodeInfoMapper.insert(ruTaskNodeInfo);
+            };
+            count++;
+        }
+        RuTaskNodeInfoExample ruTaskNodeInfoExample=new RuTaskNodeInfoExample();
+        ruTaskNodeInfoExample.createCriteria().andIdNotIn(ids);
+        ruTaskNodeInfoMapper.deleteByExample(ruTaskNodeInfoExample);
+        return taskNodeInfos.size() == count;
+    }
+    
+    @Override
+    public List<String> findMenuByAssigne(String assignee,String department) {
+        return ruTaskNodeInfoMapper.findMenuByAssigne(assignee,department);
+    }
+    
+    @Override
+    public RuTaskNodeInfo findByNameAndProcessId(String name, String processId) {
+    	RuTaskNodeInfoExample taskNodeInfoExample = new RuTaskNodeInfoExample();
+        taskNodeInfoExample.createCriteria()
+        .andNameEqualTo(name)
+        .andProcessIdEqualTo(processId);
+        List<RuTaskNodeInfo> taskNodeInfos = ruTaskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+        return ListKit.isEmpty(taskNodeInfos)?null:taskNodeInfos.get(0);
+    }
+    
+    @Override
+	public List<RuTaskNodeInfo> findByMenuPositionAll(String menuPosition) {
+		 RuTaskNodeInfoExample taskNodeInfoExample = new RuTaskNodeInfoExample();
+	     taskNodeInfoExample.createCriteria().andMenuPositionEqualTo(menuPosition);
+	        return ruTaskNodeInfoMapper.selectByExample(taskNodeInfoExample);
+	}
+}

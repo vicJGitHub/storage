@@ -1,0 +1,31 @@
+package com.hywa.bigdata.storage.mapper;
+
+import com.hywa.bigdata.storage.entity.RuOrderHandleDesigning;
+import com.hywa.bigdata.storage.entity.RuOrderHandleDesigningExample;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface RuOrderHandleDesigningMapper {
+    int countByExample(RuOrderHandleDesigningExample example);
+
+    int deleteByExample(RuOrderHandleDesigningExample example);
+
+    int deleteByPrimaryKey(String id);
+
+    int insert(RuOrderHandleDesigning record);
+
+    int insertSelective(RuOrderHandleDesigning record);
+
+    List<RuOrderHandleDesigning> selectByExample(RuOrderHandleDesigningExample example);
+
+    RuOrderHandleDesigning selectByPrimaryKey(String id);
+
+    int updateByExampleSelective(@Param("record") RuOrderHandleDesigning record, @Param("example") RuOrderHandleDesigningExample example);
+
+    int updateByExample(@Param("record") RuOrderHandleDesigning record, @Param("example") RuOrderHandleDesigningExample example);
+
+    int updateByPrimaryKeySelective(RuOrderHandleDesigning record);
+
+    int updateByPrimaryKey(RuOrderHandleDesigning record);
+}

@@ -1,0 +1,9 @@
+-------------------------------------------------------------------------------
+Test set: com.hywa.bigdata.storage.StorageApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 8.958 sec <<< FAILURE! - in com.hywa.bigdata.storage.StorageApplicationTests
+contextLoads(com.hywa.bigdata.storage.StorageApplicationTests)  Time elapsed: 0.037 sec  <<< ERROR!
+org.activiti.engine.ActivitiIllegalArgumentException: resource 'processes/helloWorld.xml' not found
+	at org.activiti.engine.impl.repository.DeploymentBuilderImpl.addClasspathResource(DeploymentBuilderImpl.java:69)
+	at com.hywa.bigdata.storage.StorageApplicationTests.contextLoads(StorageApplicationTests.java:27)
+

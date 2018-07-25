@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hywa.bigdata.storage.mapper.HiOrderHandleDesigningMapper" >
+  <resultMap id="BaseResultMap" type="com.hywa.bigdata.storage.entity.HiOrderHandleDesigning" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="anotherName" property="anotherName" jdbcType="VARCHAR" />
+    <result column="taskId" property="taskId" jdbcType="VARCHAR" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="isGeneratePassword" property="isGeneratePassword" jdbcType="INTEGER" />
+    <result column="passwordAnotherName" property="passwordAnotherName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="isEnable" property="isEnable" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="realProcess" property="realProcess" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, name, createTime, anotherName, taskId, createUser, isGeneratePassword, passwordAnotherName, 
+    type, isEnable, sort, realProcess
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigningExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hi_order_handle_designing
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hi_order_handle_designing
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hi_order_handle_designing
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigningExample" >
+    delete from hi_order_handle_designing
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigning" >
+    insert into hi_order_handle_designing (id, name, createTime, 
+      anotherName, taskId, createUser, 
+      isGeneratePassword, passwordAnotherName, 
+      type, isEnable, sort, 
+      realProcess)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{anotherName,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{isGeneratePassword,jdbcType=INTEGER}, #{passwordAnotherName,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{isEnable,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
+      #{realProcess,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigning" >
+    insert into hi_order_handle_designing
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="anotherName != null" >
+        anotherName,
+      </if>
+      <if test="taskId != null" >
+        taskId,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="isGeneratePassword != null" >
+        isGeneratePassword,
+      </if>
+      <if test="passwordAnotherName != null" >
+        passwordAnotherName,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="isEnable != null" >
+        isEnable,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="realProcess != null" >
+        realProcess,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anotherName != null" >
+        #{anotherName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isGeneratePassword != null" >
+        #{isGeneratePassword,jdbcType=INTEGER},
+      </if>
+      <if test="passwordAnotherName != null" >
+        #{passwordAnotherName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="isEnable != null" >
+        #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="realProcess != null" >
+        #{realProcess,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigningExample" resultType="java.lang.Integer" >
+    select count(*) from hi_order_handle_designing
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hi_order_handle_designing
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.anotherName != null" >
+        anotherName = #{record.anotherName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskId != null" >
+        taskId = #{record.taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null" >
+        createUser = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isGeneratePassword != null" >
+        isGeneratePassword = #{record.isGeneratePassword,jdbcType=INTEGER},
+      </if>
+      <if test="record.passwordAnotherName != null" >
+        passwordAnotherName = #{record.passwordAnotherName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.isEnable != null" >
+        isEnable = #{record.isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="record.sort != null" >
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.realProcess != null" >
+        realProcess = #{record.realProcess,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hi_order_handle_designing
+    set id = #{record.id,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      anotherName = #{record.anotherName,jdbcType=VARCHAR},
+      taskId = #{record.taskId,jdbcType=VARCHAR},
+      createUser = #{record.createUser,jdbcType=VARCHAR},
+      isGeneratePassword = #{record.isGeneratePassword,jdbcType=INTEGER},
+      passwordAnotherName = #{record.passwordAnotherName,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=INTEGER},
+      isEnable = #{record.isEnable,jdbcType=INTEGER},
+      sort = #{record.sort,jdbcType=INTEGER},
+      realProcess = #{record.realProcess,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigning" >
+    update hi_order_handle_designing
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anotherName != null" >
+        anotherName = #{anotherName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        taskId = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isGeneratePassword != null" >
+        isGeneratePassword = #{isGeneratePassword,jdbcType=INTEGER},
+      </if>
+      <if test="passwordAnotherName != null" >
+        passwordAnotherName = #{passwordAnotherName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="isEnable != null" >
+        isEnable = #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="realProcess != null" >
+        realProcess = #{realProcess,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hywa.bigdata.storage.entity.HiOrderHandleDesigning" >
+    update hi_order_handle_designing
+    set name = #{name,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      anotherName = #{anotherName,jdbcType=VARCHAR},
+      taskId = #{taskId,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      isGeneratePassword = #{isGeneratePassword,jdbcType=INTEGER},
+      passwordAnotherName = #{passwordAnotherName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      isEnable = #{isEnable,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      realProcess = #{realProcess,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--自定义批量插入-->
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into hi_order_handle_designing (id, name, createTime,
+    anotherName, taskId, createUser,
+    isGeneratePassword, passwordAnotherName,
+    type, isEnable, sort,
+    realProcess)
+    values
+    <foreach collection="list" item="hiOrderHandleDesignings" separator=",">
+      (#{hiOrderHandleDesignings.id,jdbcType=VARCHAR},
+      #{hiOrderHandleDesignings.name,jdbcType=VARCHAR},
+      #{hiOrderHandleDesignings.createTime,jdbcType=TIMESTAMP},
+      #{hiOrderHandleDesignings.anotherName,jdbcType=VARCHAR},
+      #{hiOrderHandleDesignings.taskId,jdbcType=VARCHAR},
+      #{hiOrderHandleDesignings.createUser,jdbcType=VARCHAR},
+      #{hiOrderHandleDesignings.isGeneratePassword,jdbcType=INTEGER},
+      #{hiOrderHandleDesignings.passwordAnotherName,jdbcType=VARCHAR},
+      #{hiOrderHandleDesignings.type,jdbcType=INTEGER},
+      #{hiOrderHandleDesignings.isEnable,jdbcType=INTEGER},
+      #{hiOrderHandleDesignings.sort,jdbcType=INTEGER},
+      #{hiOrderHandleDesignings.realProcess,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,39 @@
+{
+	"id": "99f37d11-7ca6-43e1-b023-9e99970273da",
+	"name": "工作流",
+	"description": null,
+	"auth": null,
+	"events": null,
+	"variables": null,
+	"order": [
+		"25ccf5db-a93c-4122-9c83-f1c5391429a8"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "25ccf5db-a93c-4122-9c83-f1c5391429a8",
+			"name": "自定义流程部署",
+			"url": "http://localhost:8080/deploy/index",
+			"description": "baseProcessInfo:流程基础信息\nflowWorkInfos:任务信息",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\r\n    \"baseProcessInfo\": {\r\n        \"id\": \"process01\",\r\n        \"businessCaseNumber\": 123,\r\n        \"type\": \"财务业务\",\r\n        \"name\": \"财务审核\",\r\n        \"isStartUsing\": 1,\r\n        \"remarks\": \"测试流程\"\r\n    },\r\n    \"flowWorkInfos\": [\r\n        {\r\n            \"id\": 111,\r\n            \"name\": \"人事审核\",\r\n            \"department\": \"人事部\",\r\n            \"assignee\": \"张三\",\r\n            \"remarks\": \"测试任务01\",\r\n            \"sort\": 1\r\n        },{\r\n            \"id\": 222,\r\n            \"name\": \"财务审核\",\r\n            \"department\": \"财务部\",\r\n            \"assignee\": \"李四\",\r\n            \"remarks\": \"测试任务02\",\r\n            \"sort\": 2\r\n        },{\r\n            \"id\": 333,\r\n            \"name\": \"经理审核\",\r\n            \"department\": \"经理室\",\r\n            \"assignee\": \"王五\",\r\n            \"remarks\": \"测试任务03\",\r\n            \"sort\": 3\r\n        }\r\n    ]\r\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		}
+	]
+}

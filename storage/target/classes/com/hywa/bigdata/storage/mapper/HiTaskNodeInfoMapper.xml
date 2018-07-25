@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hywa.bigdata.storage.mapper.HiTaskNodeInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.hywa.bigdata.storage.entity.HiTaskNodeInfo">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="isShow" property="isShow" jdbcType="INTEGER" />
+		<result column="processId" property="processId" jdbcType="VARCHAR" />
+		<result column="stepType" property="stepType" jdbcType="INTEGER" />
+		<result column="menuPosition" property="menuPosition" jdbcType="VARCHAR" />
+		<result column="assignee" property="assignee" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="department" property="department" jdbcType="VARCHAR" />
+		<result column="createUser" property="createUser" jdbcType="VARCHAR" />
+		<result column="realProcess" property="realProcess" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value}
+									and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value}
+									and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		id,name, isShow, processId, stepType, menuPosition,
+		assignee, remark,
+		sort, createTime,
+		department, createUser, realProcess
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfoExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from hi_task_node_info
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from hi_task_node_info
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		hi_task_node_info
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfoExample">
+		delete from hi_task_node_info
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfo">
+		insert into hi_task_node_info
+		(id, name, isShow,
+		processId, stepType, menuPosition,
+		assignee, remark,
+		sort,
+		createTime, department, createUser,
+		realProcess)
+		values
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{isShow,jdbcType=INTEGER},
+		#{processId,jdbcType=VARCHAR},
+		#{stepType,jdbcType=INTEGER}, #{menuPosition,jdbcType=VARCHAR},
+		#{assignee,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+		#{sort,jdbcType=INTEGER},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{department,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
+		#{realProcess,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfo">
+		insert into hi_task_node_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="isShow != null">
+				isShow,
+			</if>
+			<if test="processId != null">
+				processId,
+			</if>
+			<if test="stepType != null">
+				stepType,
+			</if>
+			<if test="menuPosition != null">
+				menuPosition,
+			</if>
+			<if test="assignee != null">
+				assignee,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="createTime != null">
+				createTime,
+			</if>
+			<if test="department != null">
+				department,
+			</if>
+			<if test="createUser != null">
+				createUser,
+			</if>
+			<if test="realProcess != null">
+				realProcess,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="isShow != null">
+				#{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="processId != null">
+				#{processId,jdbcType=VARCHAR},
+			</if>
+			<if test="stepType != null">
+				#{stepType,jdbcType=INTEGER},
+			</if>
+			<if test="menuPosition != null">
+				#{menuPosition,jdbcType=VARCHAR},
+			</if>
+			<if test="assignee != null">
+				#{assignee,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="department != null">
+				#{department,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="realProcess != null">
+				#{realProcess,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfoExample"
+		resultType="java.lang.Integer">
+		select count(*) from hi_task_node_info
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update hi_task_node_info
+		<set>
+			<if test="record.id != null">
+				id = #{record.id,jdbcType=VARCHAR},
+			</if>
+			<if test="record.name != null">
+				name = #{record.name,jdbcType=VARCHAR},
+			</if>
+			<if test="record.isShow != null">
+				isShow = #{record.isShow,jdbcType=INTEGER},
+			</if>
+			<if test="record.processId != null">
+				processId = #{record.processId,jdbcType=VARCHAR},
+			</if>
+			<if test="record.stepType != null">
+				stepType = #{record.stepType,jdbcType=INTEGER},
+			</if>
+			<if test="record.menuPosition != null">
+				menuPosition = #{record.menuPosition,jdbcType=VARCHAR},
+			</if>
+			<if test="record.assignee != null">
+				assignee = #{record.assignee,jdbcType=VARCHAR},
+			</if>
+			<if test="record.remark != null">
+				remark = #{record.remark,jdbcType=VARCHAR},
+			</if>
+			<if test="record.sort != null">
+				sort = #{record.sort,jdbcType=INTEGER},
+			</if>
+			<if test="record.createTime != null">
+				createTime = #{record.createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.department != null">
+				department = #{record.department,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createUser != null">
+				createUser = #{record.createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="record.realProcess != null">
+				realProcess = #{record.realProcess,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update hi_task_node_info
+		set id = #{record.id,jdbcType=VARCHAR},
+		name =
+		#{record.name,jdbcType=VARCHAR},
+		isShow =
+		#{record.isShow,jdbcType=INTEGER},
+		processId =
+		#{record.processId,jdbcType=VARCHAR},
+		stepType =
+		#{record.stepType,jdbcType=INTEGER},
+		menuPosition =
+		#{record.menuPosition,jdbcType=VARCHAR},
+		assignee =
+		#{record.assignee,jdbcType=VARCHAR},
+		remark =
+		#{record.remark,jdbcType=VARCHAR},
+		sort =
+		#{record.sort,jdbcType=INTEGER},
+		createTime =
+		#{record.createTime,jdbcType=TIMESTAMP},
+		department =
+		#{record.department,jdbcType=VARCHAR},
+		createUser =
+		#{record.createUser,jdbcType=VARCHAR},
+		realProcess =
+		#{record.realProcess,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfo">
+		update hi_task_node_info
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="isShow != null">
+				isShow = #{isShow,jdbcType=INTEGER},
+			</if>
+			<if test="processId != null">
+				processId = #{processId,jdbcType=VARCHAR},
+			</if>
+			<if test="stepType != null">
+				stepType = #{stepType,jdbcType=INTEGER},
+			</if>
+			<if test="menuPosition != null">
+				menuPosition = #{menuPosition,jdbcType=VARCHAR},
+			</if>
+			<if test="assignee != null">
+				assignee = #{assignee,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="department != null">
+				department = #{department,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				createUser = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="realProcess != null">
+				realProcess = #{realProcess,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.hywa.bigdata.storage.entity.HiTaskNodeInfo">
+		update
+		hi_task_node_info
+		set name = #{name,jdbcType=VARCHAR},
+		isShow =
+		#{isShow,jdbcType=INTEGER},
+		processId = #{processId,jdbcType=VARCHAR},
+		stepType = #{stepType,jdbcType=INTEGER},
+		menuPosition =
+		#{menuPosition,jdbcType=VARCHAR},
+		assignee =
+		#{assignee,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		sort
+		= #{sort,jdbcType=INTEGER},
+		createTime =
+		#{createTime,jdbcType=TIMESTAMP},
+		department =
+		#{department,jdbcType=VARCHAR},
+		createUser =
+		#{createUser,jdbcType=VARCHAR},
+		realProcess =
+		#{realProcess,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!--自定义批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List">
+		insert into hi_task_node_info (id, name, isShow,
+		department, stepType,
+		menuPosition,
+		assignee, remark, sort,
+		processId, createTime,
+		createUser,
+		realProcess)
+		values
+		<foreach collection="list" item="hiTaskNodeInfo" separator=",">
+			(#{hiTaskNodeInfo.id,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.name,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.isShow,jdbcType=INTEGER},
+			#{hiTaskNodeInfo.department,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.stepType,jdbcType=INTEGER},
+			#{hiTaskNodeInfo.menuPosition,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.assignee,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.remark,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.sort,jdbcType=INTEGER},
+			#{hiTaskNodeInfo.processId,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.createTime,jdbcType=TIMESTAMP},
+			#{hiTaskNodeInfo.createUser,jdbcType=VARCHAR},
+			#{hiTaskNodeInfo.realProcess,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+
+	<select id="findCurrentStep" resultType="java.lang.String">
+		SELECT DISTINCT name
+		FROM(SELECT DISTINCT name FROM hi_task_node_info
+		WHERE
+		processId=#{processId}
+		UNION
+		SELECT DISTINCT name FROM task_node_info
+		WHERE processId=#{processId}) a
+	</select>
+
+	<select id="findByMenuPositionOne" resultType="java.lang.String">
+		SELECT DISTINCT
+		name, isShow, processId, stepType, menuPosition, assignee, remark,
+		sort,department FROM hi_task_node_info
+		WHERE
+		menuPosition=#{menuPosition}
+	</select>
+
+	<select id="findDelAndComplete" resultType="com.hywa.bigdata.storage.entity.HiTaskNodeInfo">
+		SELECT * FROM
+		hi_task_node_info
+		WHERE
+		id IN (SELECT distinct taskId FROM orderdetail
+		)
+		AND
+		(
+		assignee LIKE CONCAT("%",#{assignee},"%")
+		OR
+		department LIKE CONCAT("%",#{department},"%")
+		)
+	</select>
+</mapper>
